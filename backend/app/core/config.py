@@ -11,6 +11,11 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 XFYUN_APP_ID = os.getenv("XFYUN_APP_ID", "")
 XFYUN_API_KEY = os.getenv("XFYUN_API_KEY", "")
 
+# 百度语音识别（STT）
+BAIDU_STT_APP_ID = os.getenv("BAIDU_STT_APP_ID", "")
+BAIDU_STT_API_KEY = os.getenv("BAIDU_STT_API_KEY", "")
+BAIDU_STT_SECRET_KEY = os.getenv("BAIDU_STT_SECRET_KEY", "")
+
 # 服务器
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "8000"))

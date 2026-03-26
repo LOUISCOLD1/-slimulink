@@ -4,19 +4,25 @@
 把AI的文字回答转成语音文件，小程序可以直接播放。
 """
 
-import os
+from enum import Enum
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from app.services.tts_service import text_to_speech
 
 router = APIRouter()
 
 
+class VoiceEnum(str, Enum):
+    zh_female = "zh_female"
+    zh_male = "zh_male"
+    zh_news = "zh_news"
+
+
 class TTSRequest(BaseModel):
-    text: str               # 要转语音的文字
-    voice: str = "zh_female" # 语音类型
-    rate: str = "+0%"        # 语速
+    text: str = Field(..., min_length=1, max_length=5000, description="要转语音的文字")
+    voice: VoiceEnum = VoiceEnum.zh_female
+    rate: str = Field(default="+0%", pattern=r'^[+-]\d{1,3}%$', description="语速，如+0%、+20%、-20%")
 
 
 @router.post("/api/tts")
@@ -36,7 +42,7 @@ async def generate_speech(req: TTSRequest):
     """
     filepath = await text_to_speech(
         text=req.text,
-        voice=req.voice,
+        voice=req.voice.value,
         rate=req.rate,
     )
     return FileResponse(

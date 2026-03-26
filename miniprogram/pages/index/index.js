@@ -97,14 +97,14 @@ Page({
     try {
       const result = await api.askPolicy(question)
 
-      // 跳转到回答页面展示结果
-      const answerData = encodeURIComponent(JSON.stringify({
+      // 用 Storage 传递数据，避免URL参数过长被截断
+      wx.setStorageSync('answerData', {
         question,
         answer: result.answer,
         sources: result.sources,
-      }))
+      })
       wx.navigateTo({
-        url: `/pages/answer/answer?data=${answerData}`,
+        url: '/pages/answer/answer',
       })
     } catch (err) {
       console.error('问答失败:', err)

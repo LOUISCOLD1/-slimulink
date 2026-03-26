@@ -4,6 +4,16 @@ Page({
   },
 
   onLoad(options) {
+    // 优先从 Storage 读取（推荐方式）
+    const storageData = wx.getStorageSync('policyDetail')
+    if (storageData) {
+      this.setData({ policy: storageData })
+      wx.setNavigationBarTitle({ title: storageData.title_zh || '政策详情' })
+      wx.removeStorageSync('policyDetail')
+      return
+    }
+
+    // 兼容旧的URL参数方式
     if (options.data) {
       try {
         const policy = JSON.parse(decodeURIComponent(options.data))

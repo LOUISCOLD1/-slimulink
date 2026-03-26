@@ -7,6 +7,7 @@ Page({
     categories: ['补贴', '低保', '医保', '教育', '住房', '创业'],
     activeCategory: '',
     searchText: '',
+    loading: true,
   },
 
   onLoad() {
@@ -20,6 +21,7 @@ Page({
   },
 
   async loadPolicies() {
+    this.setData({ loading: true })
     try {
       const policies = await api.getPolicies()
       this.setData({
@@ -29,6 +31,8 @@ Page({
     } catch (err) {
       console.error('加载政策失败:', err)
       wx.showToast({ title: '加载失败', icon: 'none' })
+    } finally {
+      this.setData({ loading: false })
     }
   },
 
@@ -71,9 +75,9 @@ Page({
     const id = e.currentTarget.dataset.id
     const policy = this.data.policies.find(p => p.id === id)
     if (policy) {
-      const policyData = encodeURIComponent(JSON.stringify(policy))
+      wx.setStorageSync('policyDetail', policy)
       wx.navigateTo({
-        url: `/pages/policy-detail/policy-detail?data=${policyData}`,
+        url: '/pages/policy-detail/policy-detail',
       })
     }
   },

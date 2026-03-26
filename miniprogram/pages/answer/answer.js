@@ -12,6 +12,19 @@ Page({
   _audioContext: null,
 
   onLoad(options) {
+    // 优先从 Storage 读取数据（推荐方式，不受URL长度限制）
+    const storageData = wx.getStorageSync('answerData')
+    if (storageData) {
+      this.setData({
+        question: storageData.question || '',
+        answer: storageData.answer || '',
+        sources: storageData.sources || [],
+      })
+      wx.removeStorageSync('answerData')
+      return
+    }
+
+    // 兼容旧的URL参数方式
     if (options.data) {
       try {
         const data = JSON.parse(decodeURIComponent(options.data))

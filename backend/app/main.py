@@ -13,9 +13,10 @@
 """
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import ask, tts, policies, contacts
+from app.routers import ask, tts, policies, contacts, stt
 from app.core.config import HOST, PORT
 
 app = FastAPI(
@@ -32,9 +33,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 全局异常处理：未捕获的异常返回友好的错误信息
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    print(f"⚠️ 未处理的异常: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"error": "服务器内部错误，请稍后再试", "success": False},
+    )
+
 # 注册路由
 app.include_router(ask.router, tags=["政策问答"])
 app.include_router(tts.router, tags=["语音合成"])
+app.include_router(stt.router, tags=["语音识别"])
 app.include_router(policies.router, tags=["政策卡片"])
 app.include_router(contacts.router, tags=["便民电话"])
 
@@ -47,6 +58,7 @@ def root():
         "endpoints": [
             "POST /api/ask     - 政策问答",
             "POST /api/tts     - 文字转语音",
+            "POST /api/stt     - 语音识别",
             "GET  /api/policies - 政策卡片列表",
             "GET  /api/contacts - 便民电话",
         ],

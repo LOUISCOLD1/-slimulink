@@ -75,7 +75,8 @@ After=network.target
 
 [Service]
 Type=simple
-User=root
+User=www-data
+Group=www-data
 WorkingDirectory=/home/policy-assistant/backend
 Environment=PATH=/home/policy-assistant/backend/venv/bin:/usr/bin
 ExecStart=/home/policy-assistant/backend/venv/bin/gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000

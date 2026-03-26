@@ -3,6 +3,7 @@ const api = require('../../utils/api')
 Page({
   data: {
     contacts: [],
+    loading: true,
   },
 
   onLoad() {
@@ -10,6 +11,7 @@ Page({
   },
 
   async loadContacts() {
+    this.setData({ loading: true })
     try {
       const contacts = await api.getContacts()
       this.setData({ contacts })
@@ -22,6 +24,8 @@ Page({
           { name: '医保服务热线', name_mn: 'ᠡᠮᠨᠡᠯᠭᠡ ᠶᠢᠨ ᠳᠠᠭᠠᠳᠬᠠᠯ', phone: '12393', description: '医疗保险咨询' },
         ],
       })
+    } finally {
+      this.setData({ loading: false })
     }
   },
 
