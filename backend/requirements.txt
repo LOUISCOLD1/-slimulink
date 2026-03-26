@@ -1,0 +1,20 @@
+fastapi==0.115.0
+uvicorn==0.30.0
+python-multipart==0.0.9
+
+# RAG 三件套
+langchain==0.3.0
+langchain-community==0.3.0
+chromadb==0.5.0
+sentence-transformers==3.0.0
+
+# AI大模型
+zhipuai==2.1.0
+openai==1.40.0
+
+# 语音
+edge-tts==6.1.12
+
+# 工具
+python-dotenv==1.0.1
+pydantic==2.9.0
