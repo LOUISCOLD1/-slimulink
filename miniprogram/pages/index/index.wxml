@@ -1,0 +1,86 @@
+<!-- 首页 - 语音问答 -->
+<view class="container">
+
+  <!-- 顶部提醒 -->
+  <view class="reminder-card" wx:if="{{reminder}}" bindtap="onReminderTap">
+    <text class="reminder-icon">📢</text>
+    <text class="reminder-text">{{reminder}}</text>
+  </view>
+
+  <!-- 语言切换 -->
+  <view class="lang-switch">
+    <view class="lang-btn {{lang === 'zh' ? 'lang-active' : ''}}" bindtap="switchLang" data-lang="zh">
+      中文
+    </view>
+    <view class="lang-btn {{lang === 'mn' ? 'lang-active' : ''}}" bindtap="switchLang" data-lang="mn">
+      ᠮᠣᠩᠭᠣᠯ
+    </view>
+  </view>
+
+  <!-- 问答区域 -->
+  <view class="qa-section">
+    <view class="qa-title text-2xl text-bold text-center">
+      {{lang === 'zh' ? '想了解什么政策？' : 'ᠶᠠᠭᠤ ᠠᠰᠠᠭᠤᠬᠤ ᠪᠤᠢ?'}}
+    </view>
+    <view class="qa-subtitle text-center text-gray">
+      {{lang === 'zh' ? '按住下方按钮说话，或点击热门问题' : 'ᠳᠣᠣᠷᠠᠬᠢ ᠲᠣᠪᠴᠢ ᠶᠢ ᠳᠠᠷᠤᠵᠤ ᠶᠠᠷᠢᠨ᠎ᠠ ᠤᠤ'}}
+    </view>
+
+    <!-- 文字输入（备选，打字也能问） -->
+    <view class="input-row">
+      <input
+        class="text-input"
+        placeholder="{{lang === 'zh' ? '也可以打字提问...' : 'ᠪᠢᠴᠢᠵᠦ ᠠᠰᠠᠭᠤᠬᠤ...'}}"
+        value="{{inputText}}"
+        bindinput="onInput"
+        confirm-type="send"
+        bindconfirm="onTextSubmit"
+      />
+      <view class="send-btn" bindtap="onTextSubmit" wx:if="{{inputText}}">
+        发送
+      </view>
+    </view>
+
+    <!-- 大录音按钮 -->
+    <view class="record-area">
+      <view
+        class="record-btn {{isRecording ? 'recording' : ''}}"
+        bindtouchstart="onRecordStart"
+        bindtouchend="onRecordEnd"
+        bindtouchcancel="onRecordEnd"
+      >
+        <text class="record-icon">🎙️</text>
+        <text class="record-text">
+          {{isRecording ? (lang === 'zh' ? '松开发送' : 'ᠲᠠᠯᠪᠢ') : (lang === 'zh' ? '按住说话' : 'ᠳᠠᠷᠤᠵᠤ ᠶᠠᠷᠢ')}}
+        </text>
+      </view>
+      <view class="record-hint text-gray" wx:if="{{isRecording}}">
+        正在录音...
+      </view>
+    </view>
+  </view>
+
+  <!-- 正在加载 -->
+  <view class="loading-card" wx:if="{{isLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">{{lang === 'zh' ? '正在查询政策...' : 'ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠬᠠᠢᠵᠤ ᠪᠠᠢᠨ᠎ᠠ...'}}</text>
+  </view>
+
+  <!-- 热门问题 -->
+  <view class="hot-section">
+    <view class="section-title text-xl text-bold">
+      {{lang === 'zh' ? '🔥 热门问题' : '🔥 ᠬᠠᠯᠠᠭᠤᠨ ᠠᠰᠠᠭᠤᠯᠲᠠ'}}
+    </view>
+    <view
+      class="hot-item"
+      wx:for="{{hotQuestions}}"
+      wx:key="index"
+      bindtap="onHotQuestion"
+      data-question="{{item.zh}}"
+    >
+      <text class="hot-icon">{{item.icon}}</text>
+      <text class="hot-text">{{lang === 'zh' ? item.zh : item.mn}}</text>
+    </view>
+  </view>
+
+</view>

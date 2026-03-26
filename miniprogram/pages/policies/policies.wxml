@@ -1,0 +1,73 @@
+<!-- 政策卡片列表页 -->
+<view class="container">
+
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索政策..."
+      value="{{searchText}}"
+      bindinput="onSearchInput"
+    />
+  </view>
+
+  <!-- 分类筛选 -->
+  <scroll-view scroll-x class="category-scroll">
+    <view
+      class="category-tag {{activeCategory === '' ? 'tag-active' : ''}}"
+      bindtap="onCategoryTap"
+      data-category=""
+    >全部</view>
+    <view
+      class="category-tag {{activeCategory === item ? 'tag-active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="index"
+      bindtap="onCategoryTap"
+      data-category="{{item}}"
+    >{{item}}</view>
+  </scroll-view>
+
+  <!-- 政策列表 -->
+  <view class="policy-list">
+    <view
+      class="policy-card"
+      wx:for="{{filteredPolicies}}"
+      wx:key="id"
+      bindtap="onPolicyTap"
+      data-id="{{item.id}}"
+    >
+      <view class="policy-header">
+        <text class="policy-icon">{{item.icon}}</text>
+        <view class="policy-titles">
+          <text class="policy-title text-xl text-bold">{{item.title_zh}}</text>
+          <text class="policy-title-mn" wx:if="{{item.title_mn}}">{{item.title_mn}}</text>
+        </view>
+      </view>
+
+      <text class="policy-summary">{{item.summary}}</text>
+
+      <view class="policy-tags">
+        <view class="info-tag money-tag" wx:if="{{item.money}}">
+          💰 {{item.money}}
+        </view>
+        <view class="info-tag where-tag" wx:if="{{item.where}}">
+          📍 {{item.where}}
+        </view>
+        <view class="info-tag deadline-tag" wx:if="{{item.deadline}}">
+          ⏰ {{item.deadline}}
+        </view>
+      </view>
+
+      <view class="policy-footer">
+        <text class="detail-link text-blue">查看详情 →</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{filteredPolicies.length === 0}}">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">暂无相关政策</text>
+  </view>
+
+</view>

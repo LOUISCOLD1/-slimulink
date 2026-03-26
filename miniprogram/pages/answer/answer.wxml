@@ -1,0 +1,45 @@
+<!-- 问答结果页 -->
+<view class="container">
+
+  <!-- 你的问题 -->
+  <view class="card question-card">
+    <view class="card-label text-gray">🗣️ 你问的</view>
+    <view class="question-text text-xl">{{question}}</view>
+  </view>
+
+  <!-- AI回答 -->
+  <view class="card answer-card">
+    <view class="card-header">
+      <view class="card-label">🤖 政策助手</view>
+      <view class="play-btn" bindtap="playAnswer">
+        {{isPlaying ? '⏸️ 暂停' : '🔊 播放语音'}}
+      </view>
+    </view>
+    <view class="answer-text text-lg">{{answer}}</view>
+
+    <!-- 来源标注 -->
+    <view class="source-section" wx:if="{{sources.length > 0}}">
+      <view class="divider"></view>
+      <view class="source-label text-gray">📄 信息来源</view>
+      <view class="source-item" wx:for="{{sources}}" wx:key="index">
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-row">
+    <view class="action-btn" bindtap="askAgain">
+      🎙️ 继续提问
+    </view>
+    <view class="action-btn action-phone" bindtap="callHotline">
+      📞 拨打12345
+    </view>
+  </view>
+
+  <!-- 提示 -->
+  <view class="disclaimer text-gray">
+    以上信息仅供参考，具体以当地最新政策为准。如有疑问，建议拨打政务热线12345咨询。
+  </view>
+
+</view>

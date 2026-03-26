@@ -1,0 +1,134 @@
+.search-bar {
+  margin-bottom: 20rpx;
+}
+
+.search-input {
+  background: white;
+  border-radius: 16rpx;
+  padding: 24rpx 32rpx;
+  font-size: 32rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+/* 分类标签 */
+.category-scroll {
+  white-space: nowrap;
+  margin-bottom: 24rpx;
+}
+
+.category-tag {
+  display: inline-block;
+  padding: 14rpx 32rpx;
+  margin-right: 16rpx;
+  background: white;
+  border-radius: 32rpx;
+  font-size: 30rpx;
+  color: #6B7280;
+}
+
+.tag-active {
+  background: #2563EB;
+  color: white;
+  font-weight: bold;
+}
+
+/* 政策卡片 */
+.policy-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.policy-card:active {
+  background: #F9FAFB;
+}
+
+.policy-header {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16rpx;
+}
+
+.policy-icon {
+  font-size: 48rpx;
+  margin-right: 16rpx;
+  margin-top: 4rpx;
+}
+
+.policy-titles {
+  flex: 1;
+}
+
+.policy-title {
+  display: block;
+  line-height: 1.4;
+}
+
+.policy-title-mn {
+  display: block;
+  font-size: 26rpx;
+  color: #6B7280;
+  margin-top: 4rpx;
+}
+
+.policy-summary {
+  font-size: 30rpx;
+  color: #4B5563;
+  margin-bottom: 16rpx;
+  line-height: 1.5;
+}
+
+.policy-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.info-tag {
+  font-size: 26rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+}
+
+.money-tag {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.where-tag {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.deadline-tag {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.policy-footer {
+  text-align: right;
+}
+
+.detail-link {
+  font-size: 30rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 80rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #9CA3AF;
+}

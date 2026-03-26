@@ -1,0 +1,135 @@
+.title-card {
+  text-align: center;
+  padding: 40rpx 32rpx;
+}
+
+.title-icon {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.title-zh {
+  display: block;
+  line-height: 1.4;
+  margin-bottom: 8rpx;
+}
+
+.title-mn {
+  display: block;
+  font-size: 30rpx;
+  color: #6B7280;
+}
+
+/* 金额卡片 */
+.money-card {
+  background: #FEF3C7;
+  border: 2rpx solid #FCD34D;
+}
+
+.money-text {
+  color: #92400E;
+  display: block;
+  margin-top: 8rpx;
+}
+
+/* 材料列表 */
+.material-list {
+  margin-top: 16rpx;
+}
+
+.material-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #F3F4F6;
+}
+
+.material-item:last-child {
+  border-bottom: none;
+}
+
+.check-icon {
+  font-size: 36rpx;
+  margin-right: 16rpx;
+}
+
+.material-text {
+  flex: 1;
+}
+
+/* 步骤列表 */
+.steps-list {
+  margin-top: 16rpx;
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #F3F4F6;
+}
+
+.step-item:last-child {
+  border-bottom: none;
+}
+
+.step-number {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #2563EB;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.step-text {
+  flex: 1;
+  padding-top: 8rpx;
+  line-height: 1.6;
+}
+
+/* 截止时间 */
+.deadline-card {
+  background: #FEE2E2;
+  border: 2rpx solid #FCA5A5;
+}
+
+.deadline-text {
+  color: #991B1B;
+  display: block;
+  margin-top: 8rpx;
+}
+
+/* 拨号按钮 */
+.phone-section {
+  margin-bottom: 24rpx;
+}
+
+.phone-btn {
+  font-size: 38rpx;
+  padding: 32rpx;
+  border-radius: 16rpx;
+}
+
+.phone-number {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 28rpx;
+}
+
+.ask-section {
+  margin-bottom: 40rpx;
+}
+
+.card-label {
+  display: block;
+  margin-bottom: 8rpx;
+  font-size: 32rpx;
+}

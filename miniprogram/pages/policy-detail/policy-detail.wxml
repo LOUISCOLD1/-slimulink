@@ -1,0 +1,66 @@
+<!-- 政策详情页 - 大字版，蒙汉对照 -->
+<view class="container">
+
+  <!-- 标题 -->
+  <view class="card title-card">
+    <text class="title-icon">{{policy.icon}}</text>
+    <text class="title-zh text-2xl text-bold">{{policy.title_zh}}</text>
+    <text class="title-mn" wx:if="{{policy.title_mn}}">{{policy.title_mn}}</text>
+  </view>
+
+  <!-- 补贴金额 -->
+  <view class="card money-card" wx:if="{{policy.money}}">
+    <text class="card-label">💰 补贴标准</text>
+    <text class="money-text text-2xl text-bold">{{policy.money}}</text>
+  </view>
+
+  <!-- 所需材料 -->
+  <view class="card" wx:if="{{policy.materials && policy.materials.length > 0}}">
+    <text class="card-label text-xl text-bold">📋 需要带的材料</text>
+    <view class="material-list">
+      <view class="material-item" wx:for="{{policy.materials}}" wx:key="index">
+        <text class="check-icon">✅</text>
+        <text class="material-text text-lg">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 办理流程 -->
+  <view class="card" wx:if="{{policy.steps && policy.steps.length > 0}}">
+    <text class="card-label text-xl text-bold">📝 办理步骤</text>
+    <view class="steps-list">
+      <view class="step-item" wx:for="{{policy.steps}}" wx:key="index">
+        <view class="step-number">{{index + 1}}</view>
+        <text class="step-text text-lg">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 办理地点 -->
+  <view class="card" wx:if="{{policy.where}}">
+    <text class="card-label text-xl text-bold">📍 去哪办</text>
+    <text class="text-lg">{{policy.where}}</text>
+  </view>
+
+  <!-- 截止时间 -->
+  <view class="card deadline-card" wx:if="{{policy.deadline}}">
+    <text class="card-label">⏰ 时间提醒</text>
+    <text class="deadline-text text-xl text-bold">{{policy.deadline}}</text>
+  </view>
+
+  <!-- 一键拨号 -->
+  <view class="phone-section" wx:if="{{policy.phone}}">
+    <button class="btn-green phone-btn" bindtap="makeCall">
+      📞 一键拨打咨询电话
+    </button>
+    <text class="phone-number text-gray text-center">{{policy.phone}}</text>
+  </view>
+
+  <!-- AI追问 -->
+  <view class="ask-section">
+    <button class="btn-primary" bindtap="askAboutPolicy">
+      🎙️ 关于这个政策，我还想问...
+    </button>
+  </view>
+
+</view>
