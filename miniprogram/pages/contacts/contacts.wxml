@@ -2,36 +2,44 @@
 <view class="container">
 
   <view class="page-title text-2xl text-bold text-center">
-    📞 便民电话
+    📞 {{lang === 'mn' ? 'ᠠᠷᠠᠳ ᠤᠨ ᠤᠲᠠᠰᠤ' : '便民电话'}}
   </view>
   <view class="page-subtitle text-center text-gray">
-    点击即可直接拨打
+    {{lang === 'mn' ? 'ᠳᠠᠷᠤᠪᠠᠯ ᠤᠲᠠᠰᠤᠳᠠᠬᠤ ᠪᠣᠯᠤᠨ᠎ᠠ' : '点击即可直接拨打'}}
   </view>
 
-  <!-- 电话列表 -->
-  <view class="contact-list">
-    <view
-      class="contact-card"
-      wx:for="{{contacts}}"
-      wx:key="index"
-      bindtap="makeCall"
-      data-phone="{{item.phone}}"
-    >
-      <view class="contact-info">
-        <text class="contact-name text-xl text-bold">{{item.name}}</text>
-        <text class="contact-name-mn text-gray" wx:if="{{item.name_mn}}">{{item.name_mn}}</text>
-        <text class="contact-desc text-gray" wx:if="{{item.description}}">{{item.description}}</text>
-      </view>
-      <view class="call-btn">
-        <text class="call-icon">📞</text>
-        <text class="call-text">拨打</text>
+  <!-- 加载中 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text>{{lang === 'mn' ? 'ᠠᠴᠢᠶᠠᠯᠠᠵᠤ ᠪᠠᠢᠨ᠎ᠠ...' : '加载中...'}}</text>
+  </view>
+
+  <block wx:else>
+    <!-- 电话列表 -->
+    <view class="contact-list">
+      <view
+        class="contact-card"
+        wx:for="{{contacts}}"
+        wx:key="index"
+        bindtap="makeCall"
+        data-phone="{{item.phone}}"
+      >
+        <view class="contact-info">
+          <text class="contact-name text-xl text-bold">{{lang === 'mn' && item.name_mn ? item.name_mn : item.name}}</text>
+          <text class="contact-name-mn text-gray" wx:if="{{lang !== 'mn' && item.name_mn}}">{{item.name_mn}}</text>
+          <text class="contact-desc text-gray" wx:if="{{item.description}}">{{item.description}}</text>
+        </view>
+        <view class="call-btn">
+          <text class="call-icon">📞</text>
+          <text class="call-text">{{lang === 'mn' ? 'ᠤᠲᠠᠰᠤᠳᠠᠬᠤ' : '拨打'}}</text>
+        </view>
       </view>
     </view>
-  </view>
 
-  <!-- 空状态 -->
-  <view class="empty-state" wx:if="{{contacts.length === 0}}">
-    <text>暂无联系电话</text>
-  </view>
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{contacts.length === 0}}">
+      <text>{{lang === 'mn' ? 'ᠤᠲᠠᠰᠤ ᠪᠠᠢᠬᠤ ᠦᠭᠡᠢ' : '暂无联系电话'}}</text>
+    </view>
+  </block>
 
 </view>

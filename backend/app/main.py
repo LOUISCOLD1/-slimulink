@@ -16,7 +16,7 @@ import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import ask, tts, policies, contacts, stt
+from app.routers import ask, tts, policies, contacts, stt, config
 from app.core.config import HOST, PORT
 
 app = FastAPI(
@@ -48,6 +48,7 @@ app.include_router(tts.router, tags=["语音合成"])
 app.include_router(stt.router, tags=["语音识别"])
 app.include_router(policies.router, tags=["政策卡片"])
 app.include_router(contacts.router, tags=["便民电话"])
+app.include_router(config.router, tags=["应用配置"])
 
 
 @app.get("/")
@@ -61,6 +62,7 @@ def root():
             "POST /api/stt     - 语音识别",
             "GET  /api/policies - 政策卡片列表",
             "GET  /api/contacts - 便民电话",
+            "GET  /api/config   - 应用配置",
         ],
     }
 

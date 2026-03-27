@@ -35,10 +35,12 @@ Page({
     }
   },
 
-  // 关于这个政策继续问AI
+  // 关于这个政策继续问AI — 预填问题到首页
   askAboutPolicy() {
     const title = this.data.policy.title_zh
-    // 跳转到首页并预填问题
+    if (title) {
+      wx.setStorageSync('prefillQuestion', title + '的具体政策是什么？')
+    }
     wx.switchTab({
       url: '/pages/index/index',
     })

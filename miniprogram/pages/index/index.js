@@ -1,5 +1,6 @@
 const api = require('../../utils/api')
 const recorder = require('../../utils/recorder')
+const { t } = require('../../utils/i18n')
 
 const app = getApp()
 
@@ -9,7 +10,9 @@ Page({
     isRecording: false,
     isLoading: false,
     inputText: '',
-    reminder: '草原生态补贴3月底截止申报，别忘了！',
+    reminder: '',
+    reminderQuestion: '',
+    hotlinePhone: '12345',
 
     hotQuestions: [
       { icon: '💰', zh: '低保每个月多少钱？怎么申请？', mn: 'ᠠᠮᠢᠳᠤᠷᠠᠯ ᠤᠨ ᠪᠠᠲᠤᠯᠠᠭᠠᠵᠢ ᠬᠡᠳᠦᠢ ᠪᠤᠢ?' },
@@ -23,6 +26,52 @@ Page({
 
   onLoad() {
     this.setData({ lang: app.globalData.lang })
+    this.loadConfig()
+
+    // 检查是否有从政策详情页预填的问题
+    const prefillQuestion = wx.getStorageSync('prefillQuestion')
+    if (prefillQuestion) {
+      wx.removeStorageSync('prefillQuestion')
+      this.setData({ inputText: prefillQuestion })
+    }
+  },
+
+  onShow() {
+    // 每次显示页面时检查是否有预填问题
+    const prefillQuestion = wx.getStorageSync('prefillQuestion')
+    if (prefillQuestion) {
+      wx.removeStorageSync('prefillQuestion')
+      this.setData({ inputText: prefillQuestion })
+    }
+  },
+
+  // 加载动态配置（提醒、热线）
+  async loadConfig() {
+    try {
+      const config = await api.getConfig()
+      // 缓存到本地
+      wx.setStorageSync('appConfig', config)
+      this.applyConfig(config)
+    } catch (err) {
+      // 网络失败时用本地缓存
+      const cached = wx.getStorageSync('appConfig')
+      if (cached) {
+        this.applyConfig(cached)
+      }
+    }
+  },
+
+  applyConfig(config) {
+    const lang = this.data.lang
+    if (config.reminder) {
+      this.setData({
+        reminder: lang === 'mn' ? config.reminder.mn : config.reminder.zh,
+        reminderQuestion: lang === 'mn' ? config.reminder.question_mn : config.reminder.question_zh,
+      })
+    }
+    if (config.hotline) {
+      this.setData({ hotlinePhone: config.hotline.phone || '12345' })
+    }
   },
 
   // 切换语言
@@ -31,6 +80,9 @@ Page({
     this.setData({ lang })
     app.globalData.lang = lang
     wx.setStorageSync('lang', lang)
+    // 刷新提醒文案
+    const config = wx.getStorageSync('appConfig')
+    if (config) this.applyConfig(config)
   },
 
   // 文字输入
@@ -70,7 +122,7 @@ Page({
 
       // 上传录音做语音识别
       this.setData({ isLoading: true })
-      wx.showLoading({ title: '识别中...' })
+      wx.showLoading({ title: t('recognizing') })
 
       const text = await recorder.uploadAndRecognize(filePath)
       wx.hideLoading()
@@ -79,13 +131,13 @@ Page({
         // 识别成功，去问AI
         this.askQuestion(text)
       } else {
-        wx.showToast({ title: '没听清，再说一次', icon: 'none' })
+        wx.showToast({ title: t('notHeard'), icon: 'none' })
         this.setData({ isLoading: false })
       }
     } catch (err) {
       console.error('录音处理失败:', err)
       wx.hideLoading()
-      wx.showToast({ title: '录音失败，请重试', icon: 'none' })
+      wx.showToast({ title: t('recordFail'), icon: 'none' })
       this.setData({ isLoading: false })
     }
   },
@@ -102,13 +154,14 @@ Page({
         question,
         answer: result.answer,
         sources: result.sources,
+        hotlinePhone: this.data.hotlinePhone,
       })
       wx.navigateTo({
         url: '/pages/answer/answer',
       })
     } catch (err) {
       console.error('问答失败:', err)
-      wx.showToast({ title: '查询失败，请检查网络', icon: 'none' })
+      wx.showToast({ title: t('queryFail'), icon: 'none' })
     } finally {
       this.setData({ isLoading: false })
     }
@@ -116,6 +169,7 @@ Page({
 
   // 点击提醒
   onReminderTap() {
-    this.askQuestion('草原生态补贴怎么申报？')
+    const question = this.data.reminderQuestion || '草原生态补贴怎么申报？'
+    this.askQuestion(question)
   },
 })

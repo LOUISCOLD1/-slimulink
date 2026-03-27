@@ -1,7 +1,11 @@
 const api = require('../../utils/api')
+const { t } = require('../../utils/i18n')
+
+const app = getApp()
 
 Page({
   data: {
+    lang: 'zh',
     policies: [],
     filteredPolicies: [],
     categories: ['补贴', '低保', '医保', '教育', '住房', '创业'],
@@ -11,6 +15,7 @@ Page({
   },
 
   onLoad() {
+    this.setData({ lang: app.globalData.lang })
     this.loadPolicies()
   },
 
@@ -24,13 +29,21 @@ Page({
     this.setData({ loading: true })
     try {
       const policies = await api.getPolicies()
+      // 缓存到本地，离线时可用
+      wx.setStorageSync('cachedPolicies', policies)
       this.setData({
         policies,
         filteredPolicies: policies,
       })
     } catch (err) {
       console.error('加载政策失败:', err)
-      wx.showToast({ title: '加载失败', icon: 'none' })
+      // 尝试使用离线缓存
+      const cached = wx.getStorageSync('cachedPolicies')
+      if (cached && cached.length > 0) {
+        this.setData({ policies: cached, filteredPolicies: cached })
+      } else {
+        wx.showToast({ title: t('loadFail'), icon: 'none' })
+      }
     } finally {
       this.setData({ loading: false })
     }

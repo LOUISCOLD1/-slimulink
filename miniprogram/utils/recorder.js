@@ -3,6 +3,8 @@
  * 封装微信录音API，录完自动上传识别
  */
 
+const { t } = require('./i18n')
+
 const recorderManager = wx.getRecorderManager()
 
 // 录音配置
@@ -25,7 +27,7 @@ recorderManager.onStop((res) => {
 
 recorderManager.onError((err) => {
   console.error('录音错误:', err)
-  wx.showToast({ title: '录音失败', icon: 'none' })
+  wx.showToast({ title: t('recordFail'), icon: 'none' })
 })
 
 /**
@@ -40,9 +42,9 @@ function startRecord() {
     },
     fail() {
       wx.showModal({
-        title: '需要录音权限',
-        content: '请在设置中允许使用麦克风',
-        confirmText: '去设置',
+        title: t('needRecordPermission'),
+        content: t('allowMicrophone'),
+        confirmText: t('goSettings'),
         success(res) {
           if (res.confirm) {
             wx.openSetting()
@@ -87,7 +89,7 @@ function uploadAndRecognize(filePath) {
           const data = JSON.parse(res.data)
           resolve(data.text || '')
         } else {
-          reject(new Error('语音识别失败'))
+          reject(new Error(t('networkError')))
         }
       },
       fail(err) {

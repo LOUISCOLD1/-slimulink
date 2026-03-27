@@ -1,12 +1,22 @@
 const api = require('../../utils/api')
+const { t } = require('../../utils/i18n')
+
+const app = getApp()
+
+const DEFAULT_CONTACTS = [
+  { name: '政务服务热线', name_mn: 'ᠵᠠᠰᠠᠭ ᠤᠨ ᠦᠢᠯᠡᠴᠢᠯᠡᠭᠡ', phone: '12345', description: '综合政务咨询' },
+  { name: '医保服务热线', name_mn: 'ᠡᠮᠨᠡᠯᠭᠡ ᠶᠢᠨ ᠳᠠᠭᠠᠳᠬᠠᠯ', phone: '12393', description: '医疗保险咨询' },
+]
 
 Page({
   data: {
+    lang: 'zh',
     contacts: [],
     loading: true,
   },
 
   onLoad() {
+    this.setData({ lang: app.globalData.lang })
     this.loadContacts()
   },
 
@@ -14,16 +24,18 @@ Page({
     this.setData({ loading: true })
     try {
       const contacts = await api.getContacts()
+      // 缓存到本地，离线时可用
+      wx.setStorageSync('cachedContacts', contacts)
       this.setData({ contacts })
     } catch (err) {
       console.error('加载联系电话失败:', err)
-      // 加载失败时用本地默认数据
-      this.setData({
-        contacts: [
-          { name: '政务服务热线', name_mn: 'ᠵᠠᠰᠠᠭ ᠤᠨ ᠦᠢᠯᠡᠴᠢᠯᠡᠭᠡ', phone: '12345', description: '综合政务咨询' },
-          { name: '医保服务热线', name_mn: 'ᠡᠮᠨᠡᠯᠭᠡ ᠶᠢᠨ ᠳᠠᠭᠠᠳᠬᠠᠯ', phone: '12393', description: '医疗保险咨询' },
-        ],
-      })
+      // 尝试使用离线缓存
+      const cached = wx.getStorageSync('cachedContacts')
+      if (cached && cached.length > 0) {
+        this.setData({ contacts: cached })
+      } else {
+        this.setData({ contacts: DEFAULT_CONTACTS })
+      }
     } finally {
       this.setData({ loading: false })
     }

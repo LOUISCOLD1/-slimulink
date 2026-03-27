@@ -130,10 +130,18 @@ function getContacts() {
   return request('/api/contacts')
 }
 
+/**
+ * 获取应用动态配置（提醒、热线等）
+ */
+function getConfig() {
+  return request('/api/config')
+}
+
 module.exports = {
   askPolicy,
   getTTSAudio,
   getPolicies,
   getPolicyDetail,
   getContacts,
+  getConfig,
 }

@@ -55,7 +55,7 @@
         </text>
       </view>
       <view class="record-hint text-gray" wx:if="{{isRecording}}">
-        正在录音...
+        {{lang === 'zh' ? '正在录音...' : 'ᠪᠢᠴᠢᠵᠦ ᠪᠠᠢᠨ᠎ᠠ...'}}
       </view>
     </view>
   </view>

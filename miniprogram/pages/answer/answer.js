@@ -1,17 +1,24 @@
 const api = require('../../utils/api')
+const { t } = require('../../utils/i18n')
+
+const app = getApp()
 
 Page({
   data: {
+    lang: 'zh',
     question: '',
     answer: '',
     sources: [],
     isPlaying: false,
+    hotlinePhone: '12345',
   },
 
   // 音频播放器
   _audioContext: null,
 
   onLoad(options) {
+    this.setData({ lang: app.globalData.lang })
+
     // 优先从 Storage 读取数据（推荐方式，不受URL长度限制）
     const storageData = wx.getStorageSync('answerData')
     if (storageData) {
@@ -19,6 +26,7 @@ Page({
         question: storageData.question || '',
         answer: storageData.answer || '',
         sources: storageData.sources || [],
+        hotlinePhone: storageData.hotlinePhone || '12345',
       })
       wx.removeStorageSync('answerData')
       return
@@ -58,7 +66,7 @@ Page({
     }
 
     try {
-      wx.showLoading({ title: '生成语音...' })
+      wx.showLoading({ title: t('generating') })
 
       // 调后端TTS接口获取语音
       const audioPath = await api.getTTSAudio(this.data.answer)
@@ -77,13 +85,13 @@ Page({
       this._audioContext.onError((err) => {
         console.error('播放失败:', err)
         this.setData({ isPlaying: false })
-        wx.showToast({ title: '播放失败', icon: 'none' })
+        wx.showToast({ title: t('playFail'), icon: 'none' })
       })
       this._audioContext.play()
     } catch (err) {
       wx.hideLoading()
       console.error('TTS失败:', err)
-      wx.showToast({ title: '语音生成失败', icon: 'none' })
+      wx.showToast({ title: t('ttsFail'), icon: 'none' })
     }
   },
 
@@ -92,10 +100,10 @@ Page({
     wx.navigateBack()
   },
 
-  // 拨打热线
+  // 拨打热线（动态号码）
   callHotline() {
     wx.makePhoneCall({
-      phoneNumber: '12345',
+      phoneNumber: this.data.hotlinePhone,
       fail() {
         // 用户取消拨号，不用处理
       },
