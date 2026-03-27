@@ -12,12 +12,20 @@ router = APIRouter()
 
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "app_config.json")
 
+# 启动时加载一次
+_config_cache: dict | None = None
+
 
 def _load_config() -> dict:
+    global _config_cache
+    if _config_cache is not None:
+        return _config_cache
     if not os.path.exists(CONFIG_FILE):
-        return {}
+        _config_cache = {}
+        return _config_cache
     with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+        _config_cache = json.load(f)
+    return _config_cache
 
 
 @router.get("/api/config")

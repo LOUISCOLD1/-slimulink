@@ -8,26 +8,38 @@ RAG 第2步：根据用户问题，从知识库中检索最相关的政策片段
   → 返回最相关的3段政策原文
 """
 
+import logging
 import os
+import threading
+
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from app.core.config import CHROMA_DB_DIR, EMBEDDING_MODEL
 
+logger = logging.getLogger(__name__)
 
-# 全局缓存，避免每次请求都重新加载
+# 全局缓存，避免每次请求都重新加载（线程安全）
 _vectordb = None
 _embeddings = None
+_vectordb_lock = threading.Lock()
 
 
 def get_vectordb() -> Chroma | None:
-    """获取向量数据库实例（懒加载，只加载一次）"""
+    """获取向量数据库实例（懒加载，只加载一次，线程安全）"""
     global _vectordb, _embeddings
 
-    if not os.path.exists(CHROMA_DB_DIR):
-        print("⚠️  向量数据库不存在，请先运行: python -m app.rag.indexer")
-        return None
+    if _vectordb is not None:
+        return _vectordb
 
-    if _vectordb is None:
+    with _vectordb_lock:
+        # 双重检查
+        if _vectordb is not None:
+            return _vectordb
+
+        if not os.path.exists(CHROMA_DB_DIR):
+            logger.warning("向量数据库不存在，请先运行: python3 -m app.rag.indexer")
+            return None
+
         _embeddings = HuggingFaceEmbeddings(
             model_name=EMBEDDING_MODEL,
             model_kwargs={"device": "cpu"},
@@ -36,7 +48,7 @@ def get_vectordb() -> Chroma | None:
             persist_directory=CHROMA_DB_DIR,
             embedding_function=_embeddings,
         )
-        print(f"✅ 向量数据库已加载，共 {_vectordb._collection.count()} 个片段")
+        logger.info("向量数据库已加载，共 %d 个片段", _vectordb._collection.count())
 
     return _vectordb
 

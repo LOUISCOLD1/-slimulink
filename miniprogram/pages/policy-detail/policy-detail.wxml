@@ -10,13 +10,13 @@
 
   <!-- 补贴金额 -->
   <view class="card money-card" wx:if="{{policy.money}}">
-    <text class="card-label">💰 补贴标准</text>
+    <text class="card-label">{{lang === 'mn' ? '💰 ᠨᠥᠬᠥᠪᠥᠷᠢ ᠶᠢᠨ ᠪᠠᠷᠢᠮᠵᠢᠶ᠎ᠠ' : '💰 补贴标准'}}</text>
     <text class="money-text text-2xl text-bold">{{policy.money}}</text>
   </view>
 
   <!-- 所需材料 -->
   <view class="card" wx:if="{{policy.materials && policy.materials.length > 0}}">
-    <text class="card-label text-xl text-bold">📋 需要带的材料</text>
+    <text class="card-label text-xl text-bold">{{lang === 'mn' ? '📋 ᠬᠡᠷᠡᠭᠲᠡᠢ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ' : '📋 需要带的材料'}}</text>
     <view class="material-list">
       <view class="material-item" wx:for="{{policy.materials}}" wx:key="index">
         <text class="check-icon">✅</text>
@@ -27,7 +27,7 @@
 
   <!-- 办理流程 -->
   <view class="card" wx:if="{{policy.steps && policy.steps.length > 0}}">
-    <text class="card-label text-xl text-bold">📝 办理步骤</text>
+    <text class="card-label text-xl text-bold">{{lang === 'mn' ? '📝 ᠭᠦᠢᠴᠡᠳᠭᠡᠬᠦ ᠠᠯᠬᠠᠮ' : '📝 办理步骤'}}</text>
     <view class="steps-list">
       <view class="step-item" wx:for="{{policy.steps}}" wx:key="index">
         <view class="step-number">{{index + 1}}</view>
@@ -38,20 +38,20 @@
 
   <!-- 办理地点 -->
   <view class="card" wx:if="{{policy.where}}">
-    <text class="card-label text-xl text-bold">📍 去哪办</text>
+    <text class="card-label text-xl text-bold">{{lang === 'mn' ? '📍 ᠬᠠᠮᠢᠭ᠎ᠠ ᠭᠦᠢᠴᠡᠳᠭᠡᠬᠦ' : '📍 去哪办'}}</text>
     <text class="text-lg">{{policy.where}}</text>
   </view>
 
   <!-- 截止时间 -->
   <view class="card deadline-card" wx:if="{{policy.deadline}}">
-    <text class="card-label">⏰ 时间提醒</text>
+    <text class="card-label">{{lang === 'mn' ? '⏰ ᠴᠠᠭ ᠤᠨ ᠰᠠᠨᠠᠭᠤᠯᠤᠮᠵᠢ' : '⏰ 时间提醒'}}</text>
     <text class="deadline-text text-xl text-bold">{{policy.deadline}}</text>
   </view>
 
   <!-- 一键拨号 -->
   <view class="phone-section" wx:if="{{policy.phone}}">
     <button class="btn-green phone-btn" bindtap="makeCall">
-      📞 一键拨打咨询电话
+      {{lang === 'mn' ? '📞 ᠵᠥᠪᠯᠡᠯᠭᠡ ᠶᠢᠨ ᠤᠲᠠᠰᠤ' : '📞 一键拨打咨询电话'}}
     </button>
     <text class="phone-number text-gray text-center">{{policy.phone}}</text>
   </view>
@@ -59,7 +59,7 @@
   <!-- AI追问 -->
   <view class="ask-section">
     <button class="btn-primary" bindtap="askAboutPolicy">
-      🎙️ 关于这个政策，我还想问...
+      {{lang === 'mn' ? '🎙️ ᠡᠨᠡ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠤᠨ ᠲᠤᠬᠠᠢ ᠠᠰᠠᠭᠤᠬᠤ...' : '🎙️ 关于这个政策，我还想问...'}}
     </button>
   </view>
 

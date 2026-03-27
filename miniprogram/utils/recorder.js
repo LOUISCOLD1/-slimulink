@@ -32,26 +32,31 @@ recorderManager.onError((err) => {
 
 /**
  * 开始录音
+ * @returns {Promise<boolean>} 是否成功开始录音（权限检查通过）
  */
 function startRecord() {
-  // 先检查录音权限
-  wx.authorize({
-    scope: 'scope.record',
-    success() {
-      recorderManager.start(RECORD_OPTIONS)
-    },
-    fail() {
-      wx.showModal({
-        title: t('needRecordPermission'),
-        content: t('allowMicrophone'),
-        confirmText: t('goSettings'),
-        success(res) {
-          if (res.confirm) {
-            wx.openSetting()
-          }
-        },
-      })
-    },
+  return new Promise((resolve) => {
+    // 先检查录音权限
+    wx.authorize({
+      scope: 'scope.record',
+      success() {
+        recorderManager.start(RECORD_OPTIONS)
+        resolve(true)
+      },
+      fail() {
+        wx.showModal({
+          title: t('needRecordPermission'),
+          content: t('allowMicrophone'),
+          confirmText: t('goSettings'),
+          success(res) {
+            if (res.confirm) {
+              wx.openSetting()
+            }
+          },
+        })
+        resolve(false)
+      },
+    })
   })
 }
 
@@ -60,10 +65,17 @@ function startRecord() {
  * @returns {Promise<string>} 录音文件临时路径
  */
 function stopRecord() {
-  return new Promise((resolve) => {
-    _onStopCallback = (filePath) => {
-      resolve(filePath)
+  return new Promise((resolve, reject) => {
+    // 10秒超时保护，防止 onStop 不触发时 Promise 永远悬挂
+    const timer = setTimeout(() => {
       _onStopCallback = null
+      reject(new Error('停止录音超时'))
+    }, 10000)
+
+    _onStopCallback = (filePath) => {
+      clearTimeout(timer)
+      _onStopCallback = null
+      resolve(filePath)
     }
     recorderManager.stop()
   })
@@ -86,8 +98,12 @@ function uploadAndRecognize(filePath) {
       },
       success(res) {
         if (res.statusCode === 200) {
-          const data = JSON.parse(res.data)
-          resolve(data.text || '')
+          try {
+            const data = JSON.parse(res.data)
+            resolve(data.text || '')
+          } catch (e) {
+            reject(new Error('服务器返回数据格式异常'))
+          }
         } else {
           reject(new Error(t('networkError')))
         }

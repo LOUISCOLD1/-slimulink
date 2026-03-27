@@ -19,6 +19,11 @@ Page({
     this.loadPolicies()
   },
 
+  onShow() {
+    // 语言可能在设置页被切换
+    this.setData({ lang: app.globalData.lang })
+  },
+
   onPullDownRefresh() {
     this.loadPolicies().then(() => {
       wx.stopPullDownRefresh()
@@ -62,7 +67,7 @@ Page({
     this.filterPolicies()
   },
 
-  // 过滤政策列表
+  // 过滤政策列表（同时搜索中文和蒙文字段）
   filterPolicies() {
     const { policies, activeCategory, searchText } = this.data
     let filtered = policies
@@ -75,6 +80,7 @@ Page({
       const keyword = searchText.toLowerCase()
       filtered = filtered.filter(p =>
         (p.title_zh && p.title_zh.toLowerCase().includes(keyword)) ||
+        (p.title_mn && p.title_mn.toLowerCase().includes(keyword)) ||
         (p.summary && p.summary.toLowerCase().includes(keyword)) ||
         (p.money && p.money.includes(keyword))
       )

@@ -1,7 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ============================================
 # 一键部署脚本
 # 在云服务器上运行这个脚本即可完成部署
+#
+# 支持系统：Debian / Ubuntu（apt 包管理器）
 #
 # 使用方法：
 #   1. 买一台云服务器（推荐阿里云/腾讯云学生机 2核2G）
@@ -11,6 +13,27 @@
 
 set -e
 
+# 错误处理：脚本异常退出时给出友好提示
+cleanup() {
+    local exit_code=$?
+    if [ $exit_code -ne 0 ]; then
+        echo ""
+        echo "❌ 部署过程中出错（退出码: $exit_code）"
+        echo "   请检查上方错误信息，修复后重新运行 bash deploy.sh"
+    fi
+}
+trap cleanup EXIT
+
+# 检查是否为 Debian/Ubuntu 系统
+if ! command -v apt &>/dev/null; then
+    echo "❌ 此脚本仅支持 Debian/Ubuntu 系统（需要 apt 包管理器）"
+    echo "   如果是 CentOS/RHEL，请手动安装依赖"
+    exit 1
+fi
+
+# 部署目录（使用标准位置 /opt）
+DEPLOY_DIR="/opt/policy-assistant"
+
 echo "======================================"
 echo "  牧民智能政策助手 - 一键部署"
 echo "======================================"
@@ -18,20 +41,20 @@ echo "======================================"
 # 1. 安装系统依赖
 echo ""
 echo "📦 [1/6] 安装系统依赖..."
-sudo apt update
+sudo apt update -qq || { echo "❌ apt update 失败，请检查网络或软件源"; exit 1; }
 sudo apt install -y python3 python3-pip python3-venv git nginx
 
 # 2. 克隆项目
 echo ""
 echo "📥 [2/6] 克隆项目..."
-cd /home
-if [ -d "policy-assistant" ]; then
+if [ -d "$DEPLOY_DIR" ]; then
     echo "  项目已存在，拉取最新代码..."
-    cd policy-assistant
+    cd "$DEPLOY_DIR"
     git pull
 else
-    git clone https://github.com/LOUISCOLD1/-slimulink.git policy-assistant
-    cd policy-assistant
+    sudo git clone --depth 1 https://github.com/LOUISCOLD1/-slimulink.git "$DEPLOY_DIR"
+    sudo chown -R "$(whoami):$(whoami)" "$DEPLOY_DIR"
+    cd "$DEPLOY_DIR"
 fi
 cd backend
 
@@ -47,10 +70,14 @@ pip install gunicorn
 echo ""
 echo "🔑 [4/6] 配置API Key..."
 if [ ! -f .env ]; then
+    if [ ! -f .env.example ]; then
+        echo "❌ 找不到 .env.example 文件，请检查项目是否完整"
+        exit 1
+    fi
     cp .env.example .env
     echo ""
     echo "  ⚠️  请编辑 .env 文件填入你的API Key："
-    echo "  nano /home/policy-assistant/backend/.env"
+    echo "  nano $DEPLOY_DIR/backend/.env"
     echo ""
     echo "  需要填写："
     echo "  - ZHIPU_API_KEY（必填，去 https://open.bigmodel.cn 注册）"
@@ -62,11 +89,14 @@ fi
 # 5. 构建知识库
 echo ""
 echo "📚 [5/6] 构建政策知识库..."
-python -m app.rag.indexer
+python3 -m app.rag.indexer
 
 # 6. 配置systemd服务（开机自启 + 自动重启）
 echo ""
 echo "🚀 [6/6] 配置后台服务..."
+
+# 确保运行用户存在
+DEPLOY_USER="$(whoami)"
 
 sudo tee /etc/systemd/system/policy-assistant.service > /dev/null <<SERVICEEOF
 [Unit]
@@ -75,11 +105,10 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
-Group=www-data
-WorkingDirectory=/home/policy-assistant/backend
-Environment=PATH=/home/policy-assistant/backend/venv/bin:/usr/bin
-ExecStart=/home/policy-assistant/backend/venv/bin/gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000
+User=$DEPLOY_USER
+WorkingDirectory=$DEPLOY_DIR/backend
+Environment=PATH=$DEPLOY_DIR/backend/venv/bin:/usr/bin
+ExecStart=$DEPLOY_DIR/backend/venv/bin/gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker -b 127.0.0.1:8000
 Restart=always
 RestartSec=5
 
@@ -90,6 +119,13 @@ SERVICEEOF
 sudo systemctl daemon-reload
 sudo systemctl enable policy-assistant
 sudo systemctl start policy-assistant
+
+# 检查服务是否启动成功
+sleep 2
+if ! sudo systemctl is-active --quiet policy-assistant; then
+    echo "⚠️  服务启动可能失败，请检查日志："
+    echo "  sudo journalctl -u policy-assistant -n 20"
+fi
 
 # 配置Nginx反向代理（让80端口转发到8000）
 sudo tee /etc/nginx/sites-available/policy-assistant > /dev/null <<NGINXEOF
@@ -114,7 +150,11 @@ server {
 NGINXEOF
 
 sudo ln -sf /etc/nginx/sites-available/policy-assistant /etc/nginx/sites-enabled/
-sudo rm -f /etc/nginx/sites-enabled/default
+# 备份并移除默认配置
+if [ -f /etc/nginx/sites-enabled/default ]; then
+    sudo cp /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/default.bak 2>/dev/null || true
+    sudo rm -f /etc/nginx/sites-enabled/default
+fi
 sudo nginx -t && sudo systemctl restart nginx
 
 # 开放防火墙端口
@@ -126,7 +166,7 @@ echo "======================================"
 echo "  ✅ 部署完成！"
 echo "======================================"
 echo ""
-echo "  服务地址: http://$(curl -s ifconfig.me 2>/dev/null || echo '你的服务器IP'):80"
+echo "  服务地址: http://你的服务器IP:80"
 echo ""
 echo "  测试命令:"
 echo "    curl http://localhost/api/ask -X POST -H 'Content-Type: application/json' \\"
@@ -137,8 +177,8 @@ echo "    查看状态: sudo systemctl status policy-assistant"
 echo "    查看日志: sudo journalctl -u policy-assistant -f"
 echo "    重启服务: sudo systemctl restart policy-assistant"
 echo "    更新政策后重建知识库:"
-echo "      cd /home/policy-assistant/backend"
+echo "      cd $DEPLOY_DIR/backend"
 echo "      source venv/bin/activate"
-echo "      python -m app.rag.indexer"
+echo "      python3 -m app.rag.indexer"
 echo "      sudo systemctl restart policy-assistant"
 echo ""

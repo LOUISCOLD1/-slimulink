@@ -44,36 +44,26 @@ function askPolicy(question) {
   }, 'POST')
 }
 
-/**
- * 文字转语音 - 返回音频文件的临时URL
- * @param {string} text - 要转语音的文字
- * @returns {Promise<string>} 音频文件临时路径
- */
-function textToSpeech(text) {
-  return new Promise((resolve, reject) => {
-    const downloadTask = wx.downloadFile({
-      url: `${app.globalData.baseUrl}/api/tts`,
-      method: 'POST',
-      header: { 'Content-Type': 'application/json' },
-      success(res) {
-        if (res.statusCode === 200) {
-          resolve(res.tempFilePath)
-        } else {
-          reject(new Error('语音合成失败'))
-        }
-      },
-      fail(err) {
-        reject(err)
-      },
-    })
-  })
-}
+// 记录上一个 TTS 临时文件路径，用于播放新音频前清理旧文件
+let _lastTTSFile = null
 
 /**
- * 用POST请求下载TTS音频（微信downloadFile不支持POST body，换个方式）
+ * 用POST请求下载TTS音频
+ * 每次生成前清理上一个临时文件，防止存储空间膨胀
  */
 function getTTSAudio(text) {
   return new Promise((resolve, reject) => {
+    // 清理上一个临时文件
+    if (_lastTTSFile) {
+      try {
+        const fs = wx.getFileSystemManager()
+        fs.unlinkSync(_lastTTSFile)
+      } catch (e) {
+        // 文件不存在也没关系
+      }
+      _lastTTSFile = null
+    }
+
     wx.request({
       url: `${app.globalData.baseUrl}/api/tts`,
       method: 'POST',
@@ -90,6 +80,7 @@ function getTTSAudio(text) {
             data: res.data,
             encoding: 'binary',
             success() {
+              _lastTTSFile = filePath
               resolve(filePath)
             },
             fail(err) {

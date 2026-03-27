@@ -1,17 +1,17 @@
+const { t } = require('../../utils/i18n')
+
 const app = getApp()
 
 Page({
   data: {
     lang: 'zh',
     engine: 'zhipu',
-    baseUrl: '',
   },
 
   onLoad() {
     this.setData({
       lang: app.globalData.lang,
       engine: app.globalData.engine,
-      baseUrl: app.globalData.baseUrl,
     })
   },
 
@@ -28,19 +28,6 @@ Page({
     this.setData({ engine })
     app.globalData.engine = engine
     wx.setStorageSync('engine', engine)
-    wx.showToast({ title: '已切换AI引擎', icon: 'none' })
-  },
-
-  onUrlInput(e) {
-    this.setData({ baseUrl: e.detail.value })
-  },
-
-  saveUrl() {
-    const url = this.data.baseUrl.trim()
-    if (url) {
-      app.globalData.baseUrl = url
-      wx.setStorageSync('baseUrl', url)
-      wx.showToast({ title: '已保存', icon: 'success' })
-    }
+    wx.showToast({ title: t('engineSwitched'), icon: 'none' })
   },
 })

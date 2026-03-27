@@ -5,10 +5,13 @@
 支持中文男声、女声，语速可调。
 """
 
-import edge_tts
+import logging
 import os
-import time
 import uuid
+
+import edge_tts
+
+logger = logging.getLogger(__name__)
 
 # 音频输出目录
 AUDIO_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "audio_cache")

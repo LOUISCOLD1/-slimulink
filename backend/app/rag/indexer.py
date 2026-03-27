@@ -10,9 +10,12 @@ RAG 第1步：把政策文档导入向量数据库
 之后用户提问时，就能通过"数字相似度"找到最相关的政策片段。
 """
 
+import logging
 import os
 import glob
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+logger = logging.getLogger(__name__)
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from app.core.config import CHROMA_DB_DIR, POLICY_DOCS_DIR, EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
@@ -41,8 +44,8 @@ def load_policy_files() -> list[dict]:
     txt_files = glob.glob(os.path.join(POLICY_DOCS_DIR, "*.txt"))
 
     if not txt_files:
-        print(f"⚠️  在 {POLICY_DOCS_DIR} 下没有找到 .txt 文件")
-        print("   请先把政策文档放进去，格式：zh_政策名.txt 或 mn_政策名.txt")
+        logger.warning("在 %s 下没有找到 .txt 文件", POLICY_DOCS_DIR)
+        logger.warning("请先把政策文档放进去，格式：zh_政策名.txt 或 mn_政策名.txt")
         return []
 
     for filepath in txt_files:
@@ -67,7 +70,7 @@ def load_policy_files() -> list[dict]:
                     "policy_name": filename.replace("zh_", "").replace("mn_", "").replace(".txt", ""),
                 },
             })
-            print(f"✅ 已读取: {filename} ({len(content)}字)")
+            logger.info("已读取: %s (%d字)", filename, len(content))
 
     return documents
 
@@ -79,9 +82,9 @@ def build_vector_db():
     运行一次就行，之后只要政策没变就不需要重新运行。
     新增政策文档后重新运行即可更新。
     """
-    print("=" * 50)
-    print("开始构建政策知识库...")
-    print("=" * 50)
+    logger.info("=" * 50)
+    logger.info("开始构建政策知识库...")
+    logger.info("=" * 50)
 
     # 第1步：读取所有政策文件
     documents = load_policy_files()
@@ -106,10 +109,10 @@ def build_vector_db():
             all_chunks.append(chunk)
             all_metadatas.append(doc["metadata"])
 
-    print(f"\n📄 共 {len(documents)} 个文档，切成 {len(all_chunks)} 个片段")
+    logger.info("共 %d 个文档，切成 %d 个片段", len(documents), len(all_chunks))
 
     # 第3步：向量化并存入数据库
-    print("🔄 正在向量化（第一次会下载模型，请等待）...")
+    logger.info("正在向量化（第一次会下载模型，请等待）...")
     embeddings = get_embeddings()
 
     # 如果已有旧数据库，先删掉重建
@@ -124,7 +127,7 @@ def build_vector_db():
         persist_directory=CHROMA_DB_DIR,
     )
 
-    print(f"✅ 知识库构建完成！共 {len(all_chunks)} 个片段已存入 {CHROMA_DB_DIR}")
+    logger.info("知识库构建完成！共 %d 个片段已存入 %s", len(all_chunks), CHROMA_DB_DIR)
     return vectordb
 
 

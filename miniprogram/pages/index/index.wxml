@@ -36,8 +36,8 @@
         confirm-type="send"
         bindconfirm="onTextSubmit"
       />
-      <view class="send-btn" bindtap="onTextSubmit" wx:if="{{inputText}}">
-        发送
+      <view class="send-btn" bindtap="onTextSubmit" wx:if="{{inputText && !isLoading}}">
+        {{lang === 'zh' ? '发送' : 'ᠢᠯᠡᠭᠡᠬᠦ'}}
       </view>
     </view>
 
@@ -76,7 +76,7 @@
       wx:for="{{hotQuestions}}"
       wx:key="index"
       bindtap="onHotQuestion"
-      data-question="{{item.zh}}"
+      data-question="{{lang === 'zh' ? item.zh : item.mn}}"
     >
       <text class="hot-icon">{{item.icon}}</text>
       <text class="hot-text">{{lang === 'zh' ? item.zh : item.mn}}</text>

@@ -6,24 +6,40 @@
 
 import json
 import os
-from fastapi import APIRouter
+from typing import Optional
+
+from fastapi import APIRouter, HTTPException
 
 router = APIRouter()
 
 # 政策卡片数据文件路径
 CARDS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "policy_cards.json")
 
+# 启动时加载一次，避免每次请求都读磁盘
+_cards_cache: list[dict] | None = None
+
 
 def _load_cards() -> list[dict]:
-    """加载政策卡片数据"""
+    """加载政策卡片数据（带缓存）"""
+    global _cards_cache
+    if _cards_cache is not None:
+        return _cards_cache
     if not os.path.exists(CARDS_FILE):
-        return []
+        _cards_cache = []
+        return _cards_cache
     with open(CARDS_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+        _cards_cache = json.load(f)
+    return _cards_cache
+
+
+def reload_cards():
+    """手动刷新缓存（更新政策数据后调用）"""
+    global _cards_cache
+    _cards_cache = None
 
 
 @router.get("/api/policies")
-def list_policies(category: str = None):
+def list_policies(category: Optional[str] = None):
     """
     获取政策卡片列表
 
@@ -58,4 +74,4 @@ def get_policy(policy_id: str):
     for card in cards:
         if card.get("id") == policy_id:
             return card
-    return {"error": "未找到该政策"}
+    raise HTTPException(status_code=404, detail="未找到该政策")

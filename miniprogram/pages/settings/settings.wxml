@@ -1,11 +1,11 @@
 <!-- 设置页 -->
 <view class="container">
 
-  <view class="page-title text-2xl text-bold text-center">⚙️ 设置</view>
+  <view class="page-title text-2xl text-bold text-center">{{lang === 'mn' ? '⚙️ ᠲᠣᠬᠢᠷᠭᠠᠯ' : '⚙️ 设置'}}</view>
 
   <!-- 语言设置 -->
   <view class="card">
-    <view class="setting-title text-xl text-bold">🌐 语言 / ᠬᠡᠯᠡ</view>
+    <view class="setting-title text-xl text-bold">🌐 {{lang === 'mn' ? 'ᠬᠡᠯᠡ' : '语言'}}</view>
     <view class="setting-options">
       <view
         class="option-btn {{lang === 'zh' ? 'option-active' : ''}}"
@@ -22,13 +22,13 @@
 
   <!-- AI引擎 -->
   <view class="card">
-    <view class="setting-title text-xl text-bold">🤖 AI引擎</view>
+    <view class="setting-title text-xl text-bold">🤖 {{lang === 'mn' ? 'AI ᠬᠥᠳᠡᠯᠭᠡᠭᠦᠷ' : 'AI引擎'}}</view>
     <view class="setting-options">
       <view
         class="option-btn {{engine === 'zhipu' ? 'option-active' : ''}}"
         bindtap="setEngine"
         data-engine="zhipu"
-      >智谱（免费）</view>
+      >{{lang === 'mn' ? 'ᠵᠢᠫᠦ (ᠦᠨ᠎ᠡ ᠦᠭᠡᠢ)' : '智谱（免费）'}}</view>
       <view
         class="option-btn {{engine === 'deepseek' ? 'option-active' : ''}}"
         bindtap="setEngine"
@@ -37,28 +37,14 @@
     </view>
   </view>
 
-  <!-- 服务器地址 -->
-  <view class="card">
-    <view class="setting-title text-xl text-bold">🖥️ 服务器地址</view>
-    <input
-      class="server-input"
-      placeholder="http://your-server-ip:80"
-      value="{{baseUrl}}"
-      bindinput="onUrlInput"
-      bindblur="saveUrl"
-    />
-    <view class="setting-hint text-gray">部署后端后填入服务器地址</view>
-  </view>
-
   <!-- 关于 -->
   <view class="card about-card">
-    <view class="setting-title text-xl text-bold">📱 关于牧智通</view>
+    <view class="setting-title text-xl text-bold">{{lang === 'mn' ? '📱 ᠮᠠᠯᠵᠢᠬᠤ ᠲᠣᠩ ᠤᠨ ᠲᠤᠬᠠᠢ' : '📱 关于牧智通'}}</view>
     <view class="about-text text-gray">
-      面向内蒙古农牧民的智能政策咨询助手。
-      支持蒙汉双语语音问答，帮助牧民了解补贴、医保、低保等惠民政策。
+      {{lang === 'mn' ? 'ᠥᠪᠥᠷ ᠮᠣᠩᠭᠣᠯ ᠤᠨ ᠮᠠᠯᠴᠢᠨ ᠲᠠᠷᠢᠶᠠᠴᠢᠨ ᠳᠤ ᠵᠣᠷᠢᠭᠤᠯᠤᠭᠰᠠᠨ ᠣᠶᠤᠨᠲᠤ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠤᠨ ᠵᠥᠪᠯᠡᠯᠭᠡ ᠶᠢᠨ ᠲᠤᠰᠠᠯᠠᠭᠴᠢ᠃' : '面向内蒙古农牧民的智能政策咨询助手。支持蒙汉双语语音问答，帮助牧民了解补贴、医保、低保等惠民政策。'}}
     </view>
     <view class="about-text text-gray" style="margin-top: 16rpx;">
-      版本 1.0.0
+      {{lang === 'mn' ? 'ᠬᠡᠪᠯᠡᠯ 1.0.0' : '版本 1.0.0'}}
     </view>
   </view>
 

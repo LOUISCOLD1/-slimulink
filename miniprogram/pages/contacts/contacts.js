@@ -41,11 +41,19 @@ Page({
     }
   },
 
+  onShow() {
+    this.setData({ lang: app.globalData.lang })
+  },
+
   // 拨打电话
   makeCall(e) {
     const phone = e.currentTarget.dataset.phone
+    if (!phone) return
     wx.makePhoneCall({
       phoneNumber: phone,
+      fail() {
+        // 用户取消拨号，不用处理
+      },
     })
   },
 })

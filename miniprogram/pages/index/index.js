@@ -27,17 +27,11 @@ Page({
   onLoad() {
     this.setData({ lang: app.globalData.lang })
     this.loadConfig()
-
-    // 检查是否有从政策详情页预填的问题
-    const prefillQuestion = wx.getStorageSync('prefillQuestion')
-    if (prefillQuestion) {
-      wx.removeStorageSync('prefillQuestion')
-      this.setData({ inputText: prefillQuestion })
-    }
   },
 
   onShow() {
-    // 每次显示页面时检查是否有预填问题
+    // 每次显示页面时检查语言变化和预填问题
+    this.setData({ lang: app.globalData.lang })
     const prefillQuestion = wx.getStorageSync('prefillQuestion')
     if (prefillQuestion) {
       wx.removeStorageSync('prefillQuestion')
@@ -92,6 +86,7 @@ Page({
 
   // 文字提交
   onTextSubmit() {
+    if (this.data.isLoading) return  // 防重复提交
     const question = this.data.inputText.trim()
     if (!question) return
     this.askQuestion(question)
@@ -99,16 +94,21 @@ Page({
 
   // 点击热门问题
   onHotQuestion(e) {
+    if (this.data.isLoading) return  // 防重复提交
     const question = e.currentTarget.dataset.question
     this.askQuestion(question)
   },
 
   // 开始录音
-  onRecordStart() {
-    this.setData({ isRecording: true })
-    recorder.startRecord()
-    // 震动反馈
-    wx.vibrateShort({ type: 'medium' })
+  async onRecordStart() {
+    if (this.data.isLoading) return  // 加载中不允许录音
+    // 先检查权限，权限通过才设置录音状态
+    const granted = await recorder.startRecord()
+    if (granted) {
+      this.setData({ isRecording: true })
+      // 震动反馈
+      wx.vibrateShort({ type: 'medium' })
+    }
   },
 
   // 停止录音
@@ -169,6 +169,7 @@ Page({
 
   // 点击提醒
   onReminderTap() {
+    if (this.data.isLoading) return
     const question = this.data.reminderQuestion || '草原生态补贴怎么申报？'
     this.askQuestion(question)
   },

@@ -4,7 +4,9 @@
 小程序调这个接口就能实现：用户提问 → AI回答
 """
 
+import asyncio
 from enum import Enum
+
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 from app.services.llm_service import ask_policy
@@ -34,7 +36,7 @@ class AskResponse(BaseModel):
 
 
 @router.post("/api/ask", response_model=AskResponse)
-def policy_ask(req: AskRequest):
+async def policy_ask(req: AskRequest):
     """
     政策问答接口
 
@@ -52,7 +54,9 @@ def policy_ask(req: AskRequest):
         "sources": ["zh_低保政策.txt"]
     }
     """
-    result = ask_policy(
+    # 在线程池中运行同步的 LLM 调用，不阻塞事件循环
+    result = await asyncio.to_thread(
+        ask_policy,
         question=req.question,
         lang=req.lang.value,
         engine=req.engine.value,

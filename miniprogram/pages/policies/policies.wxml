@@ -31,7 +31,7 @@
         wx:key="index"
         bindtap="onCategoryTap"
         data-category="{{item}}"
-      >{{item}}</view>
+      >{{lang === 'mn' ? (item === '补贴' ? 'ᠨᠥᠬᠥᠪᠥᠷᠢ' : item === '低保' ? 'ᠠᠮᠢᠳᠤᠷᠠᠯ ᠤᠨ ᠪᠠᠲᠤᠯᠠᠭᠠᠵᠢ' : item === '医保' ? 'ᠡᠮᠨᠡᠯᠭᠡ ᠶᠢᠨ ᠳᠠᠭᠠᠳᠬᠠᠯ' : item === '教育' ? 'ᠰᠤᠷᠭᠠᠨ ᠬᠥᠮᠦᠵᠢᠯ' : item === '住房' ? 'ᠣᠷᠣᠨ ᠰᠠᠭᠤᠴᠠ' : item === '创业' ? 'ᠦᠢᠯᠡᠰ ᠡᠬᠢᠯᠡᠬᠦ' : item) : item}}</view>
     </scroll-view>
 
     <!-- 政策列表 -->

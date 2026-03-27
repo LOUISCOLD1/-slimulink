@@ -20,6 +20,10 @@ BAIDU_STT_SECRET_KEY = os.getenv("BAIDU_STT_SECRET_KEY", "")
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "8000"))
 
+# CORS 白名单（逗号分隔，默认允许本地开发和微信小程序域名）
+_cors_raw = os.getenv("CORS_ORIGINS", "http://localhost:8000,https://servicewechat.com")
+CORS_ORIGINS = [s.strip() for s in _cors_raw.split(",") if s.strip()]
+
 # RAG 配置
 CHROMA_DB_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "chroma_db")
 POLICY_DOCS_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "policies")

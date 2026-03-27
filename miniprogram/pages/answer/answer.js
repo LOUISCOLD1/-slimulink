@@ -13,7 +13,7 @@ Page({
     hotlinePhone: '12345',
   },
 
-  // 音频播放器
+  // 音频播放器（复用同一个实例，防止内存泄漏）
   _audioContext: null,
 
   onLoad(options) {
@@ -48,9 +48,10 @@ Page({
   },
 
   onUnload() {
-    // 页面关闭时停止播放
+    // 页面关闭时销毁音频实例，释放资源
     if (this._audioContext) {
-      this._audioContext.stop()
+      this._audioContext.destroy()
+      this._audioContext = null
     }
   },
 
@@ -73,7 +74,10 @@ Page({
 
       wx.hideLoading()
 
-      // 播放
+      // 销毁旧的音频实例再创建新的，防止内存泄漏
+      if (this._audioContext) {
+        this._audioContext.destroy()
+      }
       this._audioContext = wx.createInnerAudioContext()
       this._audioContext.src = audioPath
       this._audioContext.onPlay(() => {

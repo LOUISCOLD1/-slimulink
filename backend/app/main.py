@@ -12,12 +12,17 @@
   3. 运行 python -m app.rag.indexer 构建知识库
 """
 
+import logging
+import traceback
+
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import ask, tts, policies, contacts, stt, config
-from app.core.config import HOST, PORT
+from app.core.config import HOST, PORT, CORS_ORIGINS
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="牧民智能政策助手 API",
@@ -25,18 +30,21 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# 允许小程序跨域请求
+# 允许小程序跨域请求（从环境变量读取白名单，默认允许本地开发）
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 全局异常处理：未捕获的异常返回友好的错误信息
+# 全局异常处理：未捕获的异常返回友好的错误信息，详细日志记录到后台
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    print(f"⚠️ 未处理的异常: {exc}")
+    logger.error(
+        "未处理的异常: %s %s -> %s\n%s",
+        request.method, request.url, exc, traceback.format_exc(),
+    )
     return JSONResponse(
         status_code=500,
         content={"error": "服务器内部错误，请稍后再试", "success": False},

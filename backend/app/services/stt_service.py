@@ -11,45 +11,54 @@
 """
 
 import base64
-import json
-import os
+import logging
+import threading
+import time
+
 import requests
 from app.core.config import (
     BAIDU_STT_APP_ID, BAIDU_STT_API_KEY, BAIDU_STT_SECRET_KEY,
     XFYUN_APP_ID, XFYUN_API_KEY,
 )
 
-# 百度语音 access_token 缓存
+logger = logging.getLogger(__name__)
+
+# 百度语音 access_token 缓存（线程安全）
 _baidu_token = None
 _baidu_token_expires = 0
+_baidu_token_lock = threading.Lock()
 
 
 def _get_baidu_token() -> str:
-    """获取百度语音API的access_token（有效期30天，自动缓存）"""
+    """获取百度语音API的access_token（有效期30天，自动缓存，线程安全）"""
     global _baidu_token, _baidu_token_expires
-    import time
 
     if _baidu_token and time.time() < _baidu_token_expires:
         return _baidu_token
 
-    if not BAIDU_STT_API_KEY or not BAIDU_STT_SECRET_KEY:
-        raise ValueError("未配置百度语音API Key，请在.env中设置BAIDU_STT_API_KEY和BAIDU_STT_SECRET_KEY")
+    with _baidu_token_lock:
+        # 双重检查：拿到锁之后再检查一次，防止多个线程重复刷新
+        if _baidu_token and time.time() < _baidu_token_expires:
+            return _baidu_token
 
-    resp = requests.post(
-        "https://aip.baidubce.com/oauth/2.0/token",
-        params={
-            "grant_type": "client_credentials",
-            "client_id": BAIDU_STT_API_KEY,
-            "client_secret": BAIDU_STT_SECRET_KEY,
-        },
-        timeout=10,
-    )
-    resp.raise_for_status()
-    result = resp.json()
+        if not BAIDU_STT_API_KEY or not BAIDU_STT_SECRET_KEY:
+            raise ValueError("百度语音服务暂不可用")
 
-    _baidu_token = result["access_token"]
-    _baidu_token_expires = time.time() + result.get("expires_in", 2592000) - 60
-    return _baidu_token
+        resp = requests.post(
+            "https://aip.baidubce.com/oauth/2.0/token",
+            params={
+                "grant_type": "client_credentials",
+                "client_id": BAIDU_STT_API_KEY,
+                "client_secret": BAIDU_STT_SECRET_KEY,
+            },
+            timeout=10,
+        )
+        resp.raise_for_status()
+        result = resp.json()
+
+        _baidu_token = result["access_token"]
+        _baidu_token_expires = time.time() + result.get("expires_in", 2592000) - 60
+        return _baidu_token
 
 
 def recognize_baidu(audio_data: bytes, format: str = "mp3", lang: str = "zh") -> str:
@@ -95,18 +104,36 @@ def recognize_baidu(audio_data: bytes, format: str = "mp3", lang: str = "zh") ->
         return result["result"][0] if result.get("result") else ""
     else:
         err_msg = result.get("err_msg", "未知错误")
-        print(f"⚠️ 百度语音识别失败: {result.get('err_no')} - {err_msg}")
+        logger.warning("百度语音识别失败: %s - %s", result.get("err_no"), err_msg)
         return ""
 
 
-def recognize_speech(audio_data: bytes, format: str = "mp3", lang: str = "zh") -> str:
+def recognize_speech(audio_data: bytes, format: str = "mp3", lang: str = "zh") -> dict:
     """
     语音识别统一入口
 
-    先尝试百度，失败了返回空字符串并提示。
+    返回 dict 包含 text、success、error 字段，方便前端展示错误信息。
+    蒙语暂不支持时返回明确提示。
     """
+    # 蒙语语音识别暂不支持，返回明确提示
+    if lang == "mn":
+        return {
+            "text": "",
+            "success": False,
+            "error": "蒙语语音识别暂不支持，请使用汉语语音或文字输入",
+        }
+
     try:
-        return recognize_baidu(audio_data, format=format, lang=lang)
+        text = recognize_baidu(audio_data, format=format, lang=lang)
+        return {
+            "text": text,
+            "success": bool(text),
+            "error": "" if text else "未能识别语音内容，请重试",
+        }
     except Exception as e:
-        print(f"⚠️ 语音识别失败: {e}")
-        return ""
+        logger.error("语音识别失败: %s", e)
+        return {
+            "text": "",
+            "success": False,
+            "error": "语音识别服务异常，请稍后重试",
+        }
