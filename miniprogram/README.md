@@ -50,9 +50,10 @@ globalData: {
 
 | 页面 | 路径 | 功能 |
 |------|------|------|
-| 首页 | pages/index | 语音/文字问答，热门问题 |
-| 回答页 | pages/answer | 展示AI回答，语音播放 |
-| 政策库 | pages/policies | 政策卡片列表，分类筛选 |
+| 首页 | pages/index | 新对话入口，语音/文字问答，热门问题 |
+| 聊天页 | pages/chat | 豆包式聊天气泡，连续追问，语音播放 |
+| 对话列表 | pages/chat-list | 历史对话管理，新建/删除 |
+| 政策库 | pages/policies | 九宫格分类 + 热门/最新政策卡片 |
 | 政策详情 | pages/policy-detail | 大字版政策详情，蒙汉对照 |
-| 便民电话 | pages/contacts | 一键拨号 |
-| 设置 | pages/settings | 语言切换、AI引擎、服务器地址 |
+| 便民电话 | pages/contacts | 分类分组，收藏置顶，一键拨号 |
+| 设置 | pages/settings | 语言、AI引擎、字体大小、语音语速、清除历史 |
