@@ -1,66 +1,41 @@
-<!-- 政策详情页 - 大字版，蒙汉对照 -->
 <view class="container">
-
-  <!-- 标题 -->
   <view class="card title-card">
-    <text class="title-icon">{{policy.icon}}</text>
-    <text class="title-zh text-2xl text-bold">{{policy.title_zh}}</text>
+    <text class="title-zh">{{policy.title_zh}}</text>
     <text class="title-mn" wx:if="{{policy.title_mn}}">{{policy.title_mn}}</text>
   </view>
 
-  <!-- 补贴金额 -->
   <view class="card money-card" wx:if="{{policy.money}}">
     <text class="card-label">{{lang === 'mn' ? '💰 ᠨᠥᠬᠥᠪᠥᠷᠢ ᠶᠢᠨ ᠪᠠᠷᠢᠮᠵᠢᠶ᠎ᠠ' : '💰 补贴标准'}}</text>
-    <text class="money-text text-2xl text-bold">{{policy.money}}</text>
+    <text class="money-amount">{{policy.money}}</text>
   </view>
 
-  <!-- 所需材料 -->
   <view class="card" wx:if="{{policy.materials && policy.materials.length > 0}}">
-    <text class="card-label text-xl text-bold">{{lang === 'mn' ? '📋 ᠬᠡᠷᠡᠭᠲᠡᠢ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ' : '📋 需要带的材料'}}</text>
-    <view class="material-list">
-      <view class="material-item" wx:for="{{policy.materials}}" wx:key="index">
-        <text class="check-icon">✅</text>
-        <text class="material-text text-lg">{{item}}</text>
-      </view>
+    <text class="card-label">{{lang === 'mn' ? '📋 ᠬᠡᠷᠡᠭᠲᠡᠢ ᠮᠠᠲ᠋ᠧᠷᠢᠶᠠᠯ' : '📋 需要带的材料'}}</text>
+    <view class="material-item" wx:for="{{policy.materials}}" wx:key="index">
+      <text class="check-icon">✅</text>
+      <text>{{item}}</text>
     </view>
   </view>
 
-  <!-- 办理流程 -->
   <view class="card" wx:if="{{policy.steps && policy.steps.length > 0}}">
-    <text class="card-label text-xl text-bold">{{lang === 'mn' ? '📝 ᠭᠦᠢᠴᠡᠳᠭᠡᠬᠦ ᠠᠯᠬᠠᠮ' : '📝 办理步骤'}}</text>
-    <view class="steps-list">
-      <view class="step-item" wx:for="{{policy.steps}}" wx:key="index">
-        <view class="step-number">{{index + 1}}</view>
-        <text class="step-text text-lg">{{item}}</text>
-      </view>
+    <text class="card-label">{{lang === 'mn' ? '📝 ᠭᠦᠢᠴᠡᠳᠭᠡᠬᠦ ᠠᠯᠬᠠᠮ' : '📝 办理步骤'}}</text>
+    <view class="step-item" wx:for="{{policy.steps}}" wx:key="index">
+      <view class="step-num">{{index + 1}}</view>
+      <text>{{item}}</text>
     </view>
   </view>
 
-  <!-- 办理地点 -->
   <view class="card" wx:if="{{policy.where}}">
-    <text class="card-label text-xl text-bold">{{lang === 'mn' ? '📍 ᠬᠠᠮᠢᠭ᠎ᠠ ᠭᠦᠢᠴᠡᠳᠭᠡᠬᠦ' : '📍 去哪办'}}</text>
-    <text class="text-lg">{{policy.where}}</text>
+    <text class="card-label">{{lang === 'mn' ? '📍 ᠬᠠᠮᠢᠭ᠎ᠠ ᠭᠦᠢᠴᠡᠳᠭᠡᠬᠦ' : '📍 去哪办'}}</text>
+    <text class="where-text">{{policy.where}}</text>
   </view>
 
-  <!-- 截止时间 -->
-  <view class="card deadline-card" wx:if="{{policy.deadline}}">
-    <text class="card-label">{{lang === 'mn' ? '⏰ ᠴᠠᠭ ᠤᠨ ᠰᠠᠨᠠᠭᠤᠯᠤᠮᠵᠢ' : '⏰ 时间提醒'}}</text>
-    <text class="deadline-text text-xl text-bold">{{policy.deadline}}</text>
+  <view class="btn-row">
+    <view class="btn-green phone-btn" bindtap="makeCall" wx:if="{{policy.phone}}">
+      📞 {{lang === 'mn' ? 'ᠵᠥᠪᠯᠡᠯᠭᠡ ᠶᠢᠨ ᠤᠲᠠᠰᠤ' : '一键拨打咨询电话'}}
+    </view>
+    <view class="btn-outline ask-btn" bindtap="askAboutPolicy">
+      🎙️ {{lang === 'mn' ? 'ᠡᠨᠡ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠤᠨ ᠲᠤᠬᠠᠢ ᠠᠰᠠᠭᠤᠬᠤ' : '关于这个政策，我还想问...'}}
+    </view>
   </view>
-
-  <!-- 一键拨号 -->
-  <view class="phone-section" wx:if="{{policy.phone}}">
-    <button class="btn-green phone-btn" bindtap="makeCall">
-      {{lang === 'mn' ? '📞 ᠵᠥᠪᠯᠡᠯᠭᠡ ᠶᠢᠨ ᠤᠲᠠᠰᠤ' : '📞 一键拨打咨询电话'}}
-    </button>
-    <text class="phone-number text-gray text-center">{{policy.phone}}</text>
-  </view>
-
-  <!-- AI追问 -->
-  <view class="ask-section">
-    <button class="btn-primary" bindtap="askAboutPolicy">
-      {{lang === 'mn' ? '🎙️ ᠡᠨᠡ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠤᠨ ᠲᠤᠬᠠᠢ ᠠᠰᠠᠭᠤᠬᠤ...' : '🎙️ 关于这个政策，我还想问...'}}
-    </button>
-  </view>
-
 </view>

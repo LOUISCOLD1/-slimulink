@@ -1,65 +1,42 @@
+const chatStore = require('../../utils/chat-store')
+const api = require('../../utils/api')
 const { t } = require('../../utils/i18n')
-
 const app = getApp()
 
 Page({
-  data: {
-    lang: 'zh',
-    policy: {},
-  },
+  data: { lang: 'zh', policy: {} },
 
-  onLoad(options) {
+  onLoad() {
     this.setData({ lang: app.globalData.lang })
-
-    // 优先从 Storage 读取（推荐方式）
-    const storageData = wx.getStorageSync('policyDetail')
-    if (storageData) {
-      this.setData({ policy: storageData })
-      // 根据语言选择标题
+    const policy = wx.getStorageSync('policyDetail')
+    if (policy) {
+      this.setData({ policy })
       const title = this.data.lang === 'mn'
-        ? (storageData.title_mn || storageData.title_zh || t('policyDetail'))
-        : (storageData.title_zh || t('policyDetail'))
-      wx.setNavigationBarTitle({ title })
+        ? (policy.title_mn || policy.title_zh)
+        : policy.title_zh
+      wx.setNavigationBarTitle({ title: title || t('policyDetail') })
       wx.removeStorageSync('policyDetail')
-      return
-    }
-
-    // 兼容旧的URL参数方式
-    if (options.data) {
-      try {
-        const policy = JSON.parse(decodeURIComponent(options.data))
-        this.setData({ policy })
-        wx.setNavigationBarTitle({ title: policy.title_zh || t('policyDetail') })
-      } catch (e) {
-        console.error('解析政策数据失败:', e)
-      }
     }
   },
 
-  // 一键拨号
   makeCall() {
     const phone = this.data.policy.phone
     if (phone) {
-      wx.makePhoneCall({
-        phoneNumber: phone,
-        fail() {
-          // 用户取消拨号，不用处理
-        },
-      })
+      wx.makePhoneCall({ phoneNumber: phone, fail() {} })
     }
   },
 
-  // 关于这个政策继续问AI — 预填问题到首页（根据当前语言生成问题）
   askAboutPolicy() {
     const policy = this.data.policy
     const lang = this.data.lang
-    if (lang === 'mn' && policy.title_mn) {
-      wx.setStorageSync('prefillQuestion', policy.title_mn + t('askPolicyQuestion'))
-    } else if (policy.title_zh) {
-      wx.setStorageSync('prefillQuestion', policy.title_zh + t('askPolicyQuestion'))
-    }
-    wx.switchTab({
-      url: '/pages/index/index',
-    })
+    const title = (lang === 'mn' && policy.title_mn) ? policy.title_mn : policy.title_zh
+    const question = title + (lang === 'mn' ? ' ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠶᠠᠭᠤ ᠪᠤᠢ?' : '的具体政策是什么？')
+
+    // 创建新对话并跳转
+    const chatId = chatStore.createChat(question)
+    chatStore.addMessage(chatId, { role: 'user', content: question })
+
+    // 异步调用AI，先跳转
+    wx.navigateTo({ url: `/pages/chat/chat?chatId=${chatId}&prefill=${encodeURIComponent(question)}` })
   },
 })
