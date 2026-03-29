@@ -1,91 +1,79 @@
-/**
- * 录音管理器
- * 封装微信录音API，录完自动上传识别
- */
-
 const { t } = require('./i18n')
 
 const recorderManager = wx.getRecorderManager()
 
-// 录音配置
 const RECORD_OPTIONS = {
-  duration: 60000,       // 最长60秒
-  sampleRate: 16000,     // 16kHz采样率
-  numberOfChannels: 1,   // 单声道
+  duration: 60000,
+  sampleRate: 16000,
+  numberOfChannels: 1,
   encodeBitRate: 48000,
-  format: 'mp3',         // MP3格式
+  format: 'mp3',
 }
 
+let _isRecording = false
 let _onStopCallback = null
 
-// 录音结束时的回调
 recorderManager.onStop((res) => {
+  _isRecording = false
   if (_onStopCallback) {
     _onStopCallback(res.tempFilePath)
+    _onStopCallback = null
   }
 })
 
 recorderManager.onError((err) => {
+  _isRecording = false
   console.error('录音错误:', err)
   wx.showToast({ title: t('recordFail'), icon: 'none' })
 })
 
 /**
- * 开始录音
- * @returns {Promise<boolean>} 是否成功开始录音（权限检查通过）
+ * 切换录音状态（点击开始/点击结束）
+ * @returns {Promise<string|null>} 停止时返回文件路径，开始时返回 null
  */
-function startRecord() {
-  return new Promise((resolve) => {
-    // 先检查录音权限
-    wx.authorize({
-      scope: 'scope.record',
-      success() {
-        recorderManager.start(RECORD_OPTIONS)
-        resolve(true)
-      },
-      fail() {
-        wx.showModal({
-          title: t('needRecordPermission'),
-          content: t('allowMicrophone'),
-          confirmText: t('goSettings'),
-          success(res) {
-            if (res.confirm) {
-              wx.openSetting()
-            }
-          },
-        })
-        resolve(false)
-      },
+function toggleRecord() {
+  if (_isRecording) {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        _onStopCallback = null
+        reject(new Error('停止录音超时'))
+      }, 10000)
+
+      _onStopCallback = (filePath) => {
+        clearTimeout(timer)
+        resolve(filePath)
+      }
+      recorderManager.stop()
     })
-  })
+  } else {
+    return new Promise((resolve) => {
+      wx.authorize({
+        scope: 'scope.record',
+        success() {
+          recorderManager.start(RECORD_OPTIONS)
+          _isRecording = true
+          resolve(null)
+        },
+        fail() {
+          wx.showModal({
+            title: t('needRecordPermission'),
+            content: t('allowMicrophone'),
+            confirmText: t('goSettings'),
+            success(res) {
+              if (res.confirm) wx.openSetting()
+            },
+          })
+          resolve(null)
+        },
+      })
+    })
+  }
 }
 
-/**
- * 停止录音
- * @returns {Promise<string>} 录音文件临时路径
- */
-function stopRecord() {
-  return new Promise((resolve, reject) => {
-    // 10秒超时保护，防止 onStop 不触发时 Promise 永远悬挂
-    const timer = setTimeout(() => {
-      _onStopCallback = null
-      reject(new Error('停止录音超时'))
-    }, 10000)
-
-    _onStopCallback = (filePath) => {
-      clearTimeout(timer)
-      _onStopCallback = null
-      resolve(filePath)
-    }
-    recorderManager.stop()
-  })
+function isRecording() {
+  return _isRecording
 }
 
-/**
- * 上传录音文件到后端做语音识别
- * @param {string} filePath - 录音文件路径
- * @returns {Promise<{text: string, error: string}>} 识别结果，含错误信息
- */
 function uploadAndRecognize(filePath) {
   const app = getApp()
   return new Promise((resolve, reject) => {
@@ -93,14 +81,11 @@ function uploadAndRecognize(filePath) {
       url: `${app.globalData.baseUrl}/api/stt`,
       filePath,
       name: 'audio',
-      formData: {
-        lang: app.globalData.lang,
-      },
+      formData: { lang: app.globalData.lang },
       success(res) {
         if (res.statusCode === 200) {
           try {
             const data = JSON.parse(res.data)
-            // 透传后端的 error 字段（如蒙语暂不支持等明确提示）
             resolve({ text: data.text || '', error: data.error || '' })
           } catch (e) {
             reject(new Error('服务器返回数据格式异常'))
@@ -109,15 +94,13 @@ function uploadAndRecognize(filePath) {
           reject(new Error(t('networkError')))
         }
       },
-      fail(err) {
-        reject(err)
-      },
+      fail(err) { reject(err) },
     })
   })
 }
 
 module.exports = {
-  startRecord,
-  stopRecord,
+  toggleRecord,
+  isRecording,
   uploadAndRecognize,
 }
