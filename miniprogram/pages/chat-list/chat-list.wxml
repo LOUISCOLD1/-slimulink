@@ -1,1 +1,27 @@
-<view class="container">chat-list</view>
+<view class="container">
+  <!-- 新建对话按钮 -->
+  <view class="new-chat-btn" bindtap="onNewChat">＋ {{lang === 'zh' ? '开始新对话' : 'ᠰᠢᠨ᠎ᠡ ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ'}}</view>
+
+  <!-- 对话列表 -->
+  <view wx:if="{{chats.length > 0}}">
+    <view class="chat-item" wx:for="{{chats}}" wx:key="id"
+      bindtap="onChatTap" data-id="{{item.id}}"
+      bindlongpress="onDeleteChat" data-id="{{item.id}}">
+      <view class="chat-icon">💬</view>
+      <view class="chat-info">
+        <view class="chat-title">{{item.title}}</view>
+        <view class="chat-preview">{{item.lastMessage}}</view>
+      </view>
+      <view class="chat-meta">
+        <view class="chat-time">{{item.timeLabel}}</view>
+        <view class="chat-badge">{{item.msgCount}}{{lang === 'zh' ? '条' : ''}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:else>
+    <view class="empty-icon">💬</view>
+    <view class="empty-text">{{lang === 'zh' ? '还没有对话，去提个问题吧' : 'ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ ᠪᠠᠢᠬᠤ ᠦᠭᠡᠢ'}}</view>
+  </view>
+</view>

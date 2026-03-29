@@ -1,1 +1,5 @@
-{"navigationBarTitleText": "我的对话"}
+{
+  "navigationBarTitleText": "我的对话",
+  "navigationBarBackgroundColor": "#064e3b",
+  "navigationBarTextStyle": "white"
+}
