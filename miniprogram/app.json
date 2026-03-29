@@ -1,40 +1,41 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/answer/answer",
+    "pages/chat/chat",
+    "pages/chat-list/chat-list",
     "pages/policies/policies",
     "pages/policy-detail/policy-detail",
     "pages/contacts/contacts",
     "pages/settings/settings"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#2563EB",
+    "navigationBarBackgroundColor": "#064e3b",
     "navigationBarTitleText": "牧智通",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#F3F4F6",
+    "backgroundColor": "#f0fdf4",
     "backgroundTextStyle": "dark"
   },
   "tabBar": {
     "color": "#999999",
-    "selectedColor": "#2563EB",
+    "selectedColor": "#059669",
     "backgroundColor": "#ffffff",
     "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "问政策",
+        "text": "问答",
         "iconPath": "static/images/tab-home.png",
         "selectedIconPath": "static/images/tab-home-active.png"
       },
       {
         "pagePath": "pages/policies/policies",
-        "text": "政策库",
+        "text": "政策",
         "iconPath": "static/images/tab-policy.png",
         "selectedIconPath": "static/images/tab-policy-active.png"
       },
       {
         "pagePath": "pages/contacts/contacts",
-        "text": "打电话",
+        "text": "电话",
         "iconPath": "static/images/tab-phone.png",
         "selectedIconPath": "static/images/tab-phone-active.png"
       },
