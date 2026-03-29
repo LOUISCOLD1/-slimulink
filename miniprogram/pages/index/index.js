@@ -1,5 +1,6 @@
 const api = require('../../utils/api')
 const recorder = require('../../utils/recorder')
+const chatStore = require('../../utils/chat-store')
 const { t } = require('../../utils/i18n')
 
 const app = getApp()
@@ -12,7 +13,7 @@ Page({
     inputText: '',
     reminder: '',
     reminderQuestion: '',
-    hotlinePhone: '12345',
+    chatCount: 0,
 
     hotQuestions: [
       { icon: '💰', zh: '低保每个月多少钱？怎么申请？', mn: 'ᠠᠮᠢᠳᠤᠷᠠᠯ ᠤᠨ ᠪᠠᠲᠤᠯᠠᠭᠠᠵᠢ ᠬᠡᠳᠦᠢ ᠪᠤᠢ?' },
@@ -30,8 +31,11 @@ Page({
   },
 
   onShow() {
-    // 每次显示页面时检查语言变化和预填问题
-    this.setData({ lang: app.globalData.lang })
+    this.setData({
+      lang: app.globalData.lang,
+      chatCount: chatStore.getChatCount(),
+    })
+    // 检查预填问题（从政策详情页跳转来的）
     const prefillQuestion = wx.getStorageSync('prefillQuestion')
     if (prefillQuestion) {
       wx.removeStorageSync('prefillQuestion')
@@ -39,19 +43,14 @@ Page({
     }
   },
 
-  // 加载动态配置（提醒、热线）
   async loadConfig() {
     try {
       const config = await api.getConfig()
-      // 缓存到本地
       wx.setStorageSync('appConfig', config)
       this.applyConfig(config)
     } catch (err) {
-      // 网络失败时用本地缓存
       const cached = wx.getStorageSync('appConfig')
-      if (cached) {
-        this.applyConfig(cached)
-      }
+      if (cached) this.applyConfig(cached)
     }
   },
 
@@ -63,102 +62,83 @@ Page({
         reminderQuestion: lang === 'mn' ? config.reminder.question_mn : config.reminder.question_zh,
       })
     }
-    if (config.hotline) {
-      this.setData({ hotlinePhone: config.hotline.phone || '12345' })
-    }
   },
 
-  // 切换语言
-  switchLang(e) {
-    const lang = e.currentTarget.dataset.lang
-    this.setData({ lang })
-    app.globalData.lang = lang
-    wx.setStorageSync('lang', lang)
-    // 刷新提醒文案
-    const config = wx.getStorageSync('appConfig')
-    if (config) this.applyConfig(config)
-  },
-
-  // 文字输入
   onInput(e) {
     this.setData({ inputText: e.detail.value })
   },
 
-  // 文字提交
   onTextSubmit() {
-    if (this.data.isLoading) return  // 防重复提交
+    if (this.data.isLoading) return
     const question = this.data.inputText.trim()
     if (!question) return
     this.askQuestion(question)
   },
 
-  // 点击热门问题
   onHotQuestion(e) {
-    if (this.data.isLoading) return  // 防重复提交
+    if (this.data.isLoading) return
     const question = e.currentTarget.dataset.question
     this.askQuestion(question)
   },
 
-  // 开始录音
-  async onRecordStart() {
-    if (this.data.isLoading) return  // 加载中不允许录音
-    // 先检查权限，权限通过才设置录音状态
-    const granted = await recorder.startRecord()
-    if (granted) {
-      this.setData({ isRecording: true })
-      // 震动反馈
-      wx.vibrateShort({ type: 'medium' })
-    }
-  },
+  async onMicTap() {
+    if (this.data.isLoading) return
 
-  // 停止录音
-  async onRecordEnd() {
-    if (!this.data.isRecording) return
-    this.setData({ isRecording: false })
+    const result = await recorder.toggleRecord()
+
+    if (result === null) {
+      // 录音已开始（或权限被拒）
+      this.setData({ isRecording: recorder.isRecording() })
+      if (recorder.isRecording()) {
+        wx.vibrateShort({ type: 'medium' })
+      }
+      return
+    }
+
+    // 录音已停止，result 是文件路径
+    this.setData({ isRecording: false, isLoading: true })
 
     try {
-      // 停止录音，获取文件
-      const filePath = await recorder.stopRecord()
-
-      // 上传录音做语音识别
-      this.setData({ isLoading: true })
       wx.showLoading({ title: t('recognizing') })
-
-      const result = await recorder.uploadAndRecognize(filePath)
+      const sttResult = await recorder.uploadAndRecognize(result)
       wx.hideLoading()
 
-      if (result.text) {
-        // 识别成功，去问AI
-        this.askQuestion(result.text)
+      if (sttResult.text) {
+        this.askQuestion(sttResult.text)
       } else {
-        // 显示后端返回的具体错误（如"蒙语语音识别暂不支持"），否则显示通用提示
-        wx.showToast({ title: result.error || t('notHeard'), icon: 'none' })
+        wx.showToast({ title: sttResult.error || t('notHeard'), icon: 'none' })
         this.setData({ isLoading: false })
       }
     } catch (err) {
-      console.error('录音处理失败:', err)
       wx.hideLoading()
       wx.showToast({ title: t('recordFail'), icon: 'none' })
       this.setData({ isLoading: false })
     }
   },
 
-  // 核心：向AI提问
   async askQuestion(question) {
     this.setData({ isLoading: true, inputText: '' })
 
     try {
+      // 1. 创建对话
+      const chatId = chatStore.createChat(question)
+
+      // 2. 添加用户消息
+      chatStore.addMessage(chatId, { role: 'user', content: question })
+
+      // 3. 调用 AI
       const result = await api.askPolicy(question)
 
-      // 用 Storage 传递数据，避免URL参数过长被截断
-      wx.setStorageSync('answerData', {
-        question,
-        answer: result.answer,
-        sources: result.sources,
-        hotlinePhone: this.data.hotlinePhone,
+      // 4. 添加 AI 回复
+      chatStore.addMessage(chatId, {
+        role: 'bot',
+        content: result.answer,
+        sources: result.sources || [],
       })
+
+      // 5. 跳转到聊天页
       wx.navigateTo({
-        url: '/pages/answer/answer',
+        url: `/pages/chat/chat?chatId=${chatId}`,
       })
     } catch (err) {
       console.error('问答失败:', err)
@@ -168,7 +148,10 @@ Page({
     }
   },
 
-  // 点击提醒
+  goToChatList() {
+    wx.navigateTo({ url: '/pages/chat-list/chat-list' })
+  },
+
   onReminderTap() {
     if (this.data.isLoading) return
     const question = this.data.reminderQuestion || '草原生态补贴怎么申报？'
