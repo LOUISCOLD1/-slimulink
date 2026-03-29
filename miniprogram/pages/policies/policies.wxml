@@ -1,81 +1,69 @@
-<!-- 政策卡片列表页 -->
 <view class="container">
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <text class="search-icon">🔍</text>
+    <input class="search-input" placeholder="{{lang === 'zh' ? '搜索政策...' : 'ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠬᠠᠢᠬᠤ...'}}"
+      bindinput="onSearchInput" value="{{searchText}}" />
+  </view>
+
+  <!-- 分类九宫格 -->
+  <view class="category-grid" wx:if="{{!searchText}}">
+    <view class="cat-item" wx:for="{{categories}}" wx:key="key"
+      bindtap="onCategoryTap" data-category="{{item.key}}">
+      <view class="cat-icon {{item.colorClass}}">{{item.icon}}</view>
+      <view class="cat-name">{{lang === 'zh' ? item.zh : item.mn}}</view>
+    </view>
+  </view>
 
   <!-- 加载中 -->
   <view class="loading-state" wx:if="{{loading}}">
     <view class="loading-spinner"></view>
-    <text>{{lang === 'mn' ? 'ᠠᠴᠢᠶᠠᠯᠠᠵᠤ ᠪᠠᠢᠨ᠎ᠠ...' : '加载中...'}}</text>
+    <text>{{lang === 'zh' ? '加载中...' : 'ᠠᠴᠢᠶᠠᠯᠠᠵᠤ ᠪᠠᠢᠨ᠎ᠠ...'}}</text>
   </view>
 
-  <block wx:else>
-    <!-- 搜索框 -->
-    <view class="search-bar">
-      <input
-        class="search-input"
-        placeholder="{{lang === 'mn' ? 'ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠬᠠᠢᠬᠤ...' : '搜索政策...'}}"
-        value="{{searchText}}"
-        bindinput="onSearchInput"
-      />
-    </view>
-
-    <!-- 分类筛选 -->
-    <scroll-view scroll-x class="category-scroll">
-      <view
-        class="category-tag {{activeCategory === '' ? 'tag-active' : ''}}"
-        bindtap="onCategoryTap"
-        data-category=""
-      >{{lang === 'mn' ? 'ᠪᠦᠭᠦᠳᠡ' : '全部'}}</view>
-      <view
-        class="category-tag {{activeCategory === item ? 'tag-active' : ''}}"
-        wx:for="{{categories}}"
-        wx:key="index"
-        bindtap="onCategoryTap"
-        data-category="{{item}}"
-      >{{lang === 'mn' ? (item === '补贴' ? 'ᠨᠥᠬᠥᠪᠥᠷᠢ' : item === '低保' ? 'ᠠᠮᠢᠳᠤᠷᠠᠯ ᠤᠨ ᠪᠠᠲᠤᠯᠠᠭᠠᠵᠢ' : item === '医保' ? 'ᠡᠮᠨᠡᠯᠭᠡ ᠶᠢᠨ ᠳᠠᠭᠠᠳᠬᠠᠯ' : item === '教育' ? 'ᠰᠤᠷᠭᠠᠨ ᠬᠥᠮᠦᠵᠢᠯ' : item === '住房' ? 'ᠣᠷᠣᠨ ᠰᠠᠭᠤᠴᠠ' : item === '创业' ? 'ᠦᠢᠯᠡᠰ ᠡᠬᠢᠯᠡᠬᠦ' : item) : item}}</view>
-    </scroll-view>
-
-    <!-- 政策列表 -->
-    <view class="policy-list">
-      <view
-        class="policy-card"
-        wx:for="{{filteredPolicies}}"
-        wx:key="id"
-        bindtap="onPolicyTap"
-        data-id="{{item.id}}"
-      >
-        <view class="policy-header">
-          <text class="policy-icon">{{item.icon}}</text>
-          <view class="policy-titles">
-            <text class="policy-title text-xl text-bold">{{item.title_zh}}</text>
-            <text class="policy-title-mn" wx:if="{{item.title_mn}}">{{item.title_mn}}</text>
-          </view>
+  <!-- 政策列表 -->
+  <view wx:if="{{!loading}}">
+    <!-- 热门政策 -->
+    <view wx:if="{{!searchText && !activeCategory && hotPolicies.length > 0}}">
+      <view class="section-header">
+        <text class="section-title">🔥 {{lang === 'zh' ? '热门政策' : 'ᠬᠠᠯᠠᠭᠤᠨ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ'}}</text>
+      </view>
+      <view class="policy-card" wx:for="{{hotPolicies}}" wx:key="id"
+        bindtap="onPolicyTap" data-id="{{item.id}}">
+        <view class="pc-header">
+          <view class="pc-title">{{lang === 'zh' ? item.title_zh : (item.title_mn || item.title_zh)}}</view>
         </view>
-
-        <text class="policy-summary">{{item.summary}}</text>
-
-        <view class="policy-tags">
-          <view class="info-tag money-tag" wx:if="{{item.money}}">
-            💰 {{item.money}}
-          </view>
-          <view class="info-tag where-tag" wx:if="{{item.where}}">
-            📍 {{item.where}}
-          </view>
-          <view class="info-tag deadline-tag" wx:if="{{item.deadline}}">
-            ⏰ {{item.deadline}}
-          </view>
-        </view>
-
-        <view class="policy-footer">
-          <text class="detail-link text-blue">{{lang === 'mn' ? 'ᠳᠡᠯᠭᠡᠷᠡᠩᠭᠦᠢ →' : '查看详情 →'}}</text>
+        <view class="pc-summary">{{item.summary}}</view>
+        <view class="pc-tags">
+          <text class="pc-tag tag-money" wx:if="{{item.money}}">💰 {{item.money}}</text>
+          <text class="pc-tag tag-where" wx:if="{{item.where}}">📍 {{item.where}}</text>
         </view>
       </view>
     </view>
 
-    <!-- 空状态 -->
-    <view class="empty-state" wx:if="{{filteredPolicies.length === 0}}">
-      <text class="empty-icon">📋</text>
-      <text class="empty-text">{{lang === 'mn' ? 'ᠬᠣᠯᠪᠣᠭᠳᠠᠬᠤ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠪᠠᠢᠬᠤ ᠦᠭᠡᠢ' : '暂无相关政策'}}</text>
+    <!-- 筛选结果/全部 -->
+    <view wx:if="{{searchText || activeCategory}}">
+      <view class="section-header">
+        <text class="section-title">{{activeCategory || (lang === 'zh' ? '搜索结果' : 'ᠬᠠᠢᠯᠲᠠ ᠶᠢᠨ ᠳᠦᠩ')}}</text>
+        <text class="section-clear" bindtap="clearFilter" wx:if="{{activeCategory}}">{{lang === 'zh' ? '清除筛选' : 'ᠴᠡᠪᠡᠷᠯᠡᠬᠦ'}}</text>
+      </view>
     </view>
-  </block>
 
+    <view class="policy-card" wx:for="{{filteredPolicies}}" wx:key="id"
+      bindtap="onPolicyTap" data-id="{{item.id}}" wx:if="{{searchText || activeCategory}}">
+      <view class="pc-header">
+        <view class="pc-title">{{lang === 'zh' ? item.title_zh : (item.title_mn || item.title_zh)}}</view>
+      </view>
+      <view class="pc-summary">{{item.summary}}</view>
+      <view class="pc-tags">
+        <text class="pc-tag tag-money" wx:if="{{item.money}}">💰 {{item.money}}</text>
+        <text class="pc-tag tag-where" wx:if="{{item.where}}">📍 {{item.where}}</text>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{(searchText || activeCategory) && filteredPolicies.length === 0}}">
+      <text>{{lang === 'zh' ? '暂无相关政策' : 'ᠬᠣᠯᠪᠣᠭᠳᠠᠬᠤ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠪᠠᠢᠬᠤ ᠦᠭᠡᠢ'}}</text>
+    </view>
+  </view>
 </view>

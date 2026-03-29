@@ -1,4 +1,6 @@
 {
-  "navigationBarTitleText": "政策大全",
+  "navigationBarTitleText": "政策大全 · ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ",
+  "navigationBarBackgroundColor": "#064e3b",
+  "navigationBarTextStyle": "white",
   "enablePullDownRefresh": true
 }

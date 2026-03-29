@@ -1,6 +1,5 @@
 const api = require('../../utils/api')
 const { t } = require('../../utils/i18n')
-
 const app = getApp()
 
 Page({
@@ -8,7 +7,17 @@ Page({
     lang: 'zh',
     policies: [],
     filteredPolicies: [],
-    categories: ['补贴', '低保', '医保', '教育', '住房', '创业'],
+    hotPolicies: [],
+    categories: [
+      { key: '补贴', icon: '💰', zh: '补贴', mn: 'ᠨᠥᠬᠥᠪᠥᠷᠢ', colorClass: 'cat-gold' },
+      { key: '医保', icon: '🏥', zh: '医保', mn: 'ᠡᠮᠨᠡᠯᠭᠡ', colorClass: 'cat-blue' },
+      { key: '教育', icon: '📚', zh: '教育', mn: 'ᠰᠤᠷᠭᠠᠨ', colorClass: 'cat-purple' },
+      { key: '草原', icon: '🌿', zh: '草原', mn: 'ᠨᠤᠲᠤᠭ', colorClass: 'cat-green' },
+      { key: '养老', icon: '👴', zh: '养老', mn: 'ᠥᠲᠡᠯᠦᠭᠡ', colorClass: 'cat-pink' },
+      { key: '住房', icon: '🏠', zh: '住房', mn: 'ᠣᠷᠣᠨ', colorClass: 'cat-sky' },
+      { key: '创业', icon: '💼', zh: '创业', mn: 'ᠦᠢᠯᠡᠰ', colorClass: 'cat-rose' },
+      { key: '', icon: '📋', zh: '更多', mn: 'ᠪᠦᠭᠦᠳᠡ', colorClass: 'cat-gray' },
+    ],
     activeCategory: '',
     searchText: '',
     loading: true,
@@ -19,33 +28,23 @@ Page({
     this.loadPolicies()
   },
 
-  onShow() {
-    // 语言可能在设置页被切换
-    this.setData({ lang: app.globalData.lang })
-  },
+  onShow() { this.setData({ lang: app.globalData.lang }) },
 
   onPullDownRefresh() {
-    this.loadPolicies().then(() => {
-      wx.stopPullDownRefresh()
-    })
+    this.loadPolicies().then(() => wx.stopPullDownRefresh())
   },
 
   async loadPolicies() {
     this.setData({ loading: true })
     try {
       const policies = await api.getPolicies()
-      // 缓存到本地，离线时可用
       wx.setStorageSync('cachedPolicies', policies)
-      this.setData({
-        policies,
-        filteredPolicies: policies,
-      })
+      const hotPolicies = policies.slice(0, 3)
+      this.setData({ policies, hotPolicies, filteredPolicies: policies })
     } catch (err) {
-      console.error('加载政策失败:', err)
-      // 尝试使用离线缓存
       const cached = wx.getStorageSync('cachedPolicies')
       if (cached && cached.length > 0) {
-        this.setData({ policies: cached, filteredPolicies: cached })
+        this.setData({ policies: cached, hotPolicies: cached.slice(0, 3), filteredPolicies: cached })
       } else {
         wx.showToast({ title: t('loadFail'), icon: 'none' })
       }
@@ -54,50 +53,47 @@ Page({
     }
   },
 
-  // 分类筛选
   onCategoryTap(e) {
     const category = e.currentTarget.dataset.category
-    this.setData({ activeCategory: category })
-    this.filterPolicies()
+    if (!category) {
+      this.setData({ activeCategory: '', filteredPolicies: this.data.policies })
+      return
+    }
+    const filtered = this.data.policies.filter(p => p.category === category)
+    this.setData({ activeCategory: category, filteredPolicies: filtered, searchText: '' })
   },
 
-  // 搜索
   onSearchInput(e) {
-    this.setData({ searchText: e.detail.value })
+    const searchText = e.detail.value
+    this.setData({ searchText, activeCategory: '' })
     this.filterPolicies()
   },
 
-  // 过滤政策列表（同时搜索中文和蒙文字段）
   filterPolicies() {
-    const { policies, activeCategory, searchText } = this.data
-    let filtered = policies
-
-    if (activeCategory) {
-      filtered = filtered.filter(p => p.category === activeCategory)
+    const keyword = this.data.searchText.toLowerCase()
+    if (!keyword) {
+      this.setData({ filteredPolicies: this.data.policies })
+      return
     }
-
-    if (searchText) {
-      const keyword = searchText.toLowerCase()
-      filtered = filtered.filter(p =>
-        (p.title_zh && p.title_zh.toLowerCase().includes(keyword)) ||
-        (p.title_mn && p.title_mn.toLowerCase().includes(keyword)) ||
-        (p.summary && p.summary.toLowerCase().includes(keyword)) ||
-        (p.money && p.money.includes(keyword))
-      )
-    }
-
+    const filtered = this.data.policies.filter(p =>
+      (p.title_zh && p.title_zh.toLowerCase().includes(keyword)) ||
+      (p.title_mn && p.title_mn.toLowerCase().includes(keyword)) ||
+      (p.summary && p.summary.toLowerCase().includes(keyword)) ||
+      (p.money && p.money.includes(keyword))
+    )
     this.setData({ filteredPolicies: filtered })
   },
 
-  // 点击政策卡片
+  clearFilter() {
+    this.setData({ activeCategory: '', searchText: '', filteredPolicies: this.data.policies })
+  },
+
   onPolicyTap(e) {
     const id = e.currentTarget.dataset.id
     const policy = this.data.policies.find(p => p.id === id)
     if (policy) {
       wx.setStorageSync('policyDetail', policy)
-      wx.navigateTo({
-        url: '/pages/policy-detail/policy-detail',
-      })
+      wx.navigateTo({ url: '/pages/policy-detail/policy-detail' })
     }
   },
 })
