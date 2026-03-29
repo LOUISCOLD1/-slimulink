@@ -84,7 +84,7 @@ function stopRecord() {
 /**
  * 上传录音文件到后端做语音识别
  * @param {string} filePath - 录音文件路径
- * @returns {Promise<string>} 识别出的文字
+ * @returns {Promise<{text: string, error: string}>} 识别结果，含错误信息
  */
 function uploadAndRecognize(filePath) {
   const app = getApp()
@@ -100,7 +100,8 @@ function uploadAndRecognize(filePath) {
         if (res.statusCode === 200) {
           try {
             const data = JSON.parse(res.data)
-            resolve(data.text || '')
+            // 透传后端的 error 字段（如蒙语暂不支持等明确提示）
+            resolve({ text: data.text || '', error: data.error || '' })
           } catch (e) {
             reject(new Error('服务器返回数据格式异常'))
           }

@@ -124,14 +124,15 @@ Page({
       this.setData({ isLoading: true })
       wx.showLoading({ title: t('recognizing') })
 
-      const text = await recorder.uploadAndRecognize(filePath)
+      const result = await recorder.uploadAndRecognize(filePath)
       wx.hideLoading()
 
-      if (text) {
+      if (result.text) {
         // 识别成功，去问AI
-        this.askQuestion(text)
+        this.askQuestion(result.text)
       } else {
-        wx.showToast({ title: t('notHeard'), icon: 'none' })
+        // 显示后端返回的具体错误（如"蒙语语音识别暂不支持"），否则显示通用提示
+        wx.showToast({ title: result.error || t('notHeard'), icon: 'none' })
         this.setData({ isLoading: false })
       }
     } catch (err) {
