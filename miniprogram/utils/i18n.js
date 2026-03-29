@@ -85,6 +85,46 @@ const i18n = {
   },
   saved: { zh: '已保存', mn: 'ᠬᠠᠳᠠᠭᠠᠯᠠᠪᠠ' },
   engineSwitched: { zh: '已切换AI引擎', mn: 'AI ᠬᠥᠳᠡᠯᠭᠡᠭᠦᠷ ᠰᠣᠯᠢᠪᠠ' },
+
+  // 首页
+  newChat: { zh: '开始新对话', mn: 'ᠰᠢᠨ᠎ᠡ ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ' },
+  clickToSpeak: { zh: '点击说话', mn: 'ᠳᠠᠷᠤᠵᠤ ᠶᠠᠷᠢ' },
+  clickToStop: { zh: '点击停止', mn: 'ᠳᠠᠷᠤᠵᠤ ᠵᠣᠭᠰᠣᠬᠤ' },
+  typeQuestion: { zh: '输入问题...', mn: 'ᠠᠰᠠᠭᠤᠯᠲᠠ ᠪᠢᠴᠢᠬᠦ...' },
+
+  // 对话页
+  playVoice: { zh: '🔊 播放语音', mn: '🔊 ᠳᠠᠭᠤ ᠲᠣᠭᠯᠠᠬᠤ' },
+  callPhone: { zh: '📞 一键拨打', mn: '📞 ᠤᠲᠠᠰᠤᠳᠠᠬᠤ' },
+  sourceLabel: { zh: '📄 来源', mn: '📄 ᠡᠬᠢ ᠰᠤᠷᠪᠤᠯᠵᠢ' },
+
+  // 对话列表
+  myChats: { zh: '我的对话', mn: 'ᠮᠢᠨᠦ ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ' },
+  noChats: { zh: '还没有对话，去提个问题吧', mn: 'ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ ᠪᠠᠢᠬᠤ ᠦᠭᠡᠢ' },
+  messagesCount: { zh: '条对话', mn: 'ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ' },
+
+  // 政策库
+  policyLibrary: { zh: '政策大全', mn: 'ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ' },
+  hotPolicies: { zh: '🔥 热门政策', mn: '🔥 ᠬᠠᠯᠠᠭᠤᠨ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ' },
+  latestPolicies: { zh: '📄 最新政策', mn: '📄 ᠰᠢᠨ᠎ᠡ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ' },
+  viewAll: { zh: '查看全部 ›', mn: 'ᠪᠦᠭᠦᠳᠡ ᠦᠵᠡᠬᠦ ›' },
+  moreCategories: { zh: '更多', mn: 'ᠪᠦᠭᠦᠳᠡ' },
+
+  // 电话页
+  favoriteContacts: { zh: '⭐ 常用号码', mn: '⭐ ᠪᠠᠢᠩᠭᠤ ᠤᠲᠠᠰᠤ' },
+
+  // 设置页（新增）
+  fontSizeSetting: { zh: '🔤 字体大小', mn: '🔤 ᠦᠰᠦᠭ ᠤᠨ ᠶᠡᠬᠡ ᠪᠠᠭ᠎ᠠ' },
+  fontLarge: { zh: '大', mn: 'ᠶᠡᠬᠡ' },
+  fontXlarge: { zh: '特大', mn: 'ᠣᠨᠴᠠ ᠶᠡᠬᠡ' },
+  fontXxlarge: { zh: '超大', mn: 'ᠮᠠᠰᠢ ᠶᠡᠬᠡ' },
+  speechRateSetting: { zh: '🔊 语音语速', mn: '🔊 ᠳᠠᠭᠤᠨ ᠤ ᠬᠤᠷᠳᠤ' },
+  speedSlow: { zh: '慢速', mn: 'ᠤᠳᠠᠭᠠᠨ' },
+  speedNormal: { zh: '正常', mn: 'ᠬᠡᠪ ᠤᠨ' },
+  speedFast: { zh: '快速', mn: 'ᠬᠤᠷᠳᠤᠨ' },
+  clearHistory: { zh: '🗑️ 清除对话历史', mn: '🗑️ ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ ᠠᠷᠢᠯᠭᠠᠬᠤ' },
+  clearHistoryConfirm: { zh: '确定要清除所有对话记录吗？', mn: 'ᠪᠦᠬᠦ ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ ᠶᠢ ᠠᠷᠢᠯᠭᠠᠬᠤ ᠤᠤ?' },
+  clearDone: { zh: '已清除', mn: 'ᠠᠷᠢᠯᠭᠠᠪᠠ' },
+  version: { zh: '版本', mn: 'ᠬᠡᠪᠯᠡᠯ' },
 }
 
 /**
