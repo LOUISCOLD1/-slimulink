@@ -1,1 +1,56 @@
-<view class="container">chat</view>
+<view class="chat-container">
+  <!-- 消息列表 -->
+  <scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation>
+    <view class="msg-wrapper" wx:for="{{messages}}" wx:key="index" id="msg-{{index}}">
+      <!-- 用户消息 -->
+      <view class="msg-user" wx:if="{{item.role === 'user'}}">
+        <view class="bubble-user">{{item.content}}</view>
+      </view>
+      <!-- AI消息 -->
+      <view class="msg-bot" wx:else>
+        <view class="bot-avatar">🤖</view>
+        <view class="bubble-bot">
+          <rich-text nodes="{{item.contentHtml || item.content}}"></rich-text>
+          <!-- 操作按钮 -->
+          <view class="bot-actions">
+            <view class="action-btn play-btn" bindtap="playVoice" data-index="{{index}}" data-text="{{item.content}}">
+              <text>{{playingIndex === index ? '⏹️ 停止' : '🔊 播放语音'}}</text>
+            </view>
+          </view>
+          <!-- 来源 -->
+          <view class="bot-source" wx:if="{{item.sources && item.sources.length > 0}}">
+            <text class="source-label">📄 {{lang === 'zh' ? '来源' : 'ᠡᠬᠢ ᠰᠤᠷᠪᠤᠯᠵᠢ'}}：</text>
+            <text class="source-name" wx:for="{{item.sources}}" wx:for-item="src" wx:key="*this">{{src}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- AI 思考中 -->
+    <view class="msg-wrapper" wx:if="{{isThinking}}" id="msg-thinking">
+      <view class="msg-bot">
+        <view class="bot-avatar">🤖</view>
+        <view class="bubble-bot thinking">
+          <view class="thinking-dots">
+            <view class="dot"></view>
+            <view class="dot"></view>
+            <view class="dot"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部间距 -->
+    <view style="height: 120rpx;"></view>
+  </scroll-view>
+
+  <!-- 底部输入栏 -->
+  <view class="input-bar">
+    <input class="input-field" placeholder="{{lang === 'zh' ? '继续提问...' : 'ᠦᠷᠭᠦᠯᠵᠢᠯᠡᠨ ᠠᠰᠠᠭᠤᠬᠤ...'}}"
+      value="{{inputText}}" bindinput="onInput" bindconfirm="onSend"
+      disabled="{{isThinking}}" />
+    <view class="input-mic {{isRecording ? 'mic-active' : ''}}" bindtap="onMicTap">
+      <text>🎙️</text>
+    </view>
+  </view>
+</view>
