@@ -1,51 +1,71 @@
-<!-- 设置页 -->
 <view class="container">
+  <view class="page-title">{{lang === 'mn' ? '⚙️ ᠲᠣᠬᠢᠷᠭᠠᠯ' : '⚙️ 设置'}}</view>
 
-  <view class="page-title text-2xl text-bold text-center">{{lang === 'mn' ? '⚙️ ᠲᠣᠬᠢᠷᠭᠠᠯ' : '⚙️ 设置'}}</view>
-
-  <!-- 语言设置 -->
+  <!-- 语言 -->
   <view class="card">
-    <view class="setting-title text-xl text-bold">🌐 {{lang === 'mn' ? 'ᠬᠡᠯᠡ' : '语言'}}</view>
-    <view class="setting-options">
-      <view
-        class="option-btn {{lang === 'zh' ? 'option-active' : ''}}"
-        bindtap="setLang"
-        data-lang="zh"
-      >中文</view>
-      <view
-        class="option-btn {{lang === 'mn' ? 'option-active' : ''}}"
-        bindtap="setLang"
-        data-lang="mn"
-      >ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ</view>
+    <view class="setting-label">🌐 {{lang === 'mn' ? 'ᠬᠡᠯᠡ' : '语言'}}</view>
+    <view class="option-group">
+      <view class="option-btn {{lang === 'zh' ? 'option-active' : ''}}" bindtap="setLang" data-lang="zh">中文</view>
+      <view class="option-btn {{lang === 'mn' ? 'option-active' : ''}}" bindtap="setLang" data-lang="mn">ᠮᠣᠩᠭᠣᠯ ᠬᠡᠯᠡ</view>
     </view>
   </view>
 
   <!-- AI引擎 -->
   <view class="card">
-    <view class="setting-title text-xl text-bold">🤖 {{lang === 'mn' ? 'AI ᠬᠥᠳᠡᠯᠭᠡᠭᠦᠷ' : 'AI引擎'}}</view>
-    <view class="setting-options">
-      <view
-        class="option-btn {{engine === 'zhipu' ? 'option-active' : ''}}"
-        bindtap="setEngine"
-        data-engine="zhipu"
-      >{{lang === 'mn' ? 'ᠵᠢᠫᠦ (ᠦᠨ᠎ᠡ ᠦᠭᠡᠢ)' : '智谱（免费）'}}</view>
-      <view
-        class="option-btn {{engine === 'deepseek' ? 'option-active' : ''}}"
-        bindtap="setEngine"
-        data-engine="deepseek"
-      >DeepSeek</view>
+    <view class="setting-label">🤖 {{lang === 'mn' ? 'AI ᠬᠥᠳᠡᠯᠭᠡᠭᠦᠷ' : 'AI引擎'}}</view>
+    <view class="option-group">
+      <view class="option-btn {{engine === 'zhipu' ? 'option-active' : ''}}" bindtap="setEngine" data-engine="zhipu">
+        {{lang === 'mn' ? 'ᠵᠢᠫᠦ (ᠦᠨ᠎ᠡ ᠦᠭᠡᠢ)' : '智谱（免费）'}}
+      </view>
+      <view class="option-btn {{engine === 'deepseek' ? 'option-active' : ''}}" bindtap="setEngine" data-engine="deepseek">DeepSeek</view>
+    </view>
+  </view>
+
+  <!-- 字体大小 -->
+  <view class="card">
+    <view class="setting-label">🔤 {{lang === 'mn' ? 'ᠦᠰᠦᠭ ᠤᠨ ᠶᠡᠬᠡ ᠪᠠᠭ᠎ᠠ' : '字体大小'}}</view>
+    <view class="option-group">
+      <view class="option-btn {{fontSize === 'large' ? 'option-active' : ''}}" bindtap="setFontSize" data-size="large">
+        {{lang === 'mn' ? 'ᠶᠡᠬᠡ' : '大'}}
+      </view>
+      <view class="option-btn {{fontSize === 'xlarge' ? 'option-active' : ''}}" bindtap="setFontSize" data-size="xlarge">
+        {{lang === 'mn' ? 'ᠣᠨᠴᠠ ᠶᠡᠬᠡ' : '特大'}}
+      </view>
+      <view class="option-btn {{fontSize === 'xxlarge' ? 'option-active' : ''}}" bindtap="setFontSize" data-size="xxlarge">
+        {{lang === 'mn' ? 'ᠮᠠᠰᠢ ᠶᠡᠬᠡ' : '超大'}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 语音语速 -->
+  <view class="card">
+    <view class="setting-label">🔊 {{lang === 'mn' ? 'ᠳᠠᠭᠤᠨ ᠤ ᠬᠤᠷᠳᠤ' : '语音语速'}}</view>
+    <view class="option-group">
+      <view class="option-btn {{speechRate === '-20%' ? 'option-active' : ''}}" bindtap="setSpeechRate" data-rate="-20%">
+        {{lang === 'mn' ? 'ᠤᠳᠠᠭᠠᠨ' : '慢速'}}
+      </view>
+      <view class="option-btn {{speechRate === '+0%' ? 'option-active' : ''}}" bindtap="setSpeechRate" data-rate="+0%">
+        {{lang === 'mn' ? 'ᠬᠡᠪ ᠤᠨ' : '正常'}}
+      </view>
+      <view class="option-btn {{speechRate === '+20%' ? 'option-active' : ''}}" bindtap="setSpeechRate" data-rate="+20%">
+        {{lang === 'mn' ? 'ᠬᠤᠷᠳᠤᠨ' : '快速'}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 清除历史 -->
+  <view class="card">
+    <view class="clear-btn" bindtap="clearHistory">
+      🗑️ {{lang === 'mn' ? 'ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ ᠠᠷᠢᠯᠭᠠᠬᠤ' : '清除对话历史'}}
     </view>
   </view>
 
   <!-- 关于 -->
   <view class="card about-card">
-    <view class="setting-title text-xl text-bold">{{lang === 'mn' ? '📱 ᠮᠠᠯᠵᠢᠬᠤ ᠲᠣᠩ ᠤᠨ ᠲᠤᠬᠠᠢ' : '📱 关于牧智通'}}</view>
-    <view class="about-text text-gray">
+    <view class="setting-label">📱 {{lang === 'mn' ? 'ᠮᠠᠯᠵᠢᠬᠤ ᠲᠣᠩ ᠤᠨ ᠲᠤᠬᠠᠢ' : '关于牧智通'}}</view>
+    <view class="about-text">
       {{lang === 'mn' ? 'ᠥᠪᠥᠷ ᠮᠣᠩᠭᠣᠯ ᠤᠨ ᠮᠠᠯᠴᠢᠨ ᠲᠠᠷᠢᠶᠠᠴᠢᠨ ᠳᠤ ᠵᠣᠷᠢᠭᠤᠯᠤᠭᠰᠠᠨ ᠣᠶᠤᠨᠲᠤ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠤᠨ ᠵᠥᠪᠯᠡᠯᠭᠡ ᠶᠢᠨ ᠲᠤᠰᠠᠯᠠᠭᠴᠢ᠃' : '面向内蒙古农牧民的智能政策咨询助手。支持蒙汉双语语音问答，帮助牧民了解补贴、医保、低保等惠民政策。'}}
     </view>
-    <view class="about-text text-gray" style="margin-top: 16rpx;">
-      {{lang === 'mn' ? 'ᠬᠡᠪᠯᠡᠯ 1.0.0' : '版本 1.0.0'}}
-    </view>
+    <view class="about-version">{{lang === 'mn' ? 'ᠬᠡᠪᠯᠡᠯ' : '版本'}} 2.0.0</view>
   </view>
-
 </view>
