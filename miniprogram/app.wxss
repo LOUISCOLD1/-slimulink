@@ -1,10 +1,12 @@
-/* 草原绿金主题 — 全局样式 */
+/* 草原绿金主题 — 全局样式（Organic Grassland Luxury） */
 page {
   --green-dark: #064e3b;
   --green-mid: #047857;
   --green-light: #059669;
   --green-bg: #f0fdf4;
+  --green-deepest: #022c22;
   --gold: #fbbf24;
+  --gold-warm: #f59e0b;
   --gold-bg: #fffbeb;
   --gold-border: #fcd34d;
   --gold-text: #78350f;
@@ -13,9 +15,14 @@ page {
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
   --border: #d1fae5;
-  --shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+  --shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04), 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  --shadow-tight: 0 1rpx 4rpx rgba(0, 0, 0, 0.08);
+  --shadow-diffuse: 0 12rpx 32rpx rgba(0, 0, 0, 0.05);
+  --shadow-layered: 0 1rpx 4rpx rgba(0, 0, 0, 0.08), 0 12rpx 32rpx rgba(0, 0, 0, 0.05);
 
   background-color: var(--green-bg);
+  /* 在绿色背景上叠加细微的噪点纹理，增加有机质感 */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   color: var(--text-primary);
 }
@@ -24,6 +31,9 @@ page {
 .font-large page, page { font-size: 32rpx; }
 .font-xlarge page { font-size: 36rpx; }
 .font-xxlarge page { font-size: 40rpx; }
+
+/* 过渡工具类 */
+.ease { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
 /* 工具类 */
 .text-lg { font-size: 36rpx; }
@@ -48,7 +58,12 @@ page {
   border-radius: 20rpx;
   padding: 32rpx;
   margin: 16rpx 24rpx;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-layered);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card:active {
+  transform: scale(0.985);
+  box-shadow: var(--shadow-tight);
 }
 
 .btn-green {
@@ -60,12 +75,18 @@ page {
   font-weight: bold;
   text-align: center;
   border: none;
+  box-shadow: 0 4rpx 12rpx rgba(5, 150, 105, 0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.btn-green:active { opacity: 0.85; }
+.btn-green:active {
+  opacity: 0.85;
+  transform: scale(0.97);
+  box-shadow: 0 2rpx 6rpx rgba(5, 150, 105, 0.2);
+}
 
 .divider {
   height: 2rpx;
-  background: var(--border);
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
   margin: 24rpx 0;
 }
 

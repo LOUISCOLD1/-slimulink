@@ -1,13 +1,26 @@
 .container { padding: 20rpx 0 40rpx; }
 .page-title {
-  font-size: 40rpx; font-weight: 700; color: #064e3b;
+  font-size: 40rpx; font-weight: 700; color: #022c22;
   padding: 8rpx 28rpx 24rpx;
+  position: relative;
+  display: inline-block;
+}
+/* 标题下方金色装饰线 */
+.page-title::after {
+  content: '';
+  position: absolute;
+  left: 28rpx;
+  bottom: 16rpx;
+  width: 56rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: linear-gradient(90deg, #fbbf24, rgba(251, 191, 36, 0.2));
 }
 
 .card {
   background: #fff; border-radius: 20rpx;
   padding: 28rpx; margin: 0 24rpx 16rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.06), 0 8rpx 24rpx rgba(0, 0, 0, 0.04);
 }
 
 .setting-label { font-size: 30rpx; font-weight: 600; color: #1f2937; margin-bottom: 16rpx; }
@@ -18,19 +31,31 @@
   padding: 16rpx 12rpx; border-radius: 12rpx;
   font-size: 26rpx; color: #6b7280;
   background: #f3f4f6; border: 2rpx solid transparent;
-  transition: all 0.2s;
+  /* 更平滑的选中态过渡 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .option-active {
   background: #ecfdf5; color: #059669; font-weight: 600;
   border-color: #059669;
+  /* 金色点缀表示选中 — 底部细线 */
+  box-shadow: inset 0 -3rpx 0 0 #fbbf24;
 }
 
 .clear-btn {
   text-align: center; padding: 20rpx; font-size: 30rpx;
   color: #dc2626; font-weight: 500;
-  border: 2rpx solid #fecaca; border-radius: 12rpx;
+  /* 警示渐变边框替代纯红扁平色 */
+  border: 2rpx solid transparent;
+  border-radius: 12rpx;
+  background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #fecaca, #fca5a5, #f87171);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.clear-btn:active { background: #fef2f2; }
+.clear-btn:active {
+  background-image: linear-gradient(#fef2f2, #fef2f2), linear-gradient(135deg, #f87171, #ef4444);
+  transform: scale(0.98);
+}
 
 .about-card { }
 .about-text { font-size: 26rpx; color: #6b7280; line-height: 1.6; }

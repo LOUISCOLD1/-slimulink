@@ -9,9 +9,37 @@
   font-weight: 600;
   text-align: center;
   margin: 24rpx 24rpx 20rpx;
-  box-shadow: 0 8rpx 24rpx rgba(5,150,105,0.25);
+  box-shadow: 0 4rpx 8rpx rgba(5, 150, 105, 0.2), 0 12rpx 32rpx rgba(5, 150, 105, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.new-chat-btn:active { opacity: 0.85; }
+/* 按钮上的微光扫过效果 */
+.new-chat-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { left: -100%; }
+  50% { left: 150%; }
+  100% { left: 150%; }
+}
+.new-chat-btn:active {
+  opacity: 0.85;
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 4rpx rgba(5, 150, 105, 0.15), 0 6rpx 16rpx rgba(5, 150, 105, 0.15);
+}
 
 .chat-item {
   display: flex;
@@ -21,9 +49,15 @@
   margin: 0 24rpx 12rpx;
   border-radius: 16rpx;
   padding: 24rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.04), 0 6rpx 16rpx rgba(0, 0, 0, 0.03);
+  /* 左侧金色指示线 */
+  border-left: 4rpx solid rgba(251, 191, 36, 0.4);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.chat-item:active { background: #f9fafb; }
+.chat-item:active {
+  background: #fafffe;
+  transform: scale(0.985);
+}
 
 .chat-icon { font-size: 40rpx; flex-shrink: 0; }
 .chat-info { flex: 1; overflow: hidden; }
@@ -48,7 +82,11 @@
   flex-shrink: 0;
   text-align: right;
 }
-.chat-time { font-size: 22rpx; color: #9ca3af; }
+.chat-time {
+  font-size: 22rpx;
+  color: #9ca3af;
+  letter-spacing: 1rpx;
+}
 .chat-badge {
   font-size: 20rpx;
   color: #059669;
@@ -57,6 +95,7 @@
   border-radius: 12rpx;
   margin-top: 6rpx;
   display: inline-block;
+  font-weight: 500;
 }
 
 .empty-state {

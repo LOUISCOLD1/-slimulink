@@ -1,10 +1,16 @@
 .banner {
   background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
-  padding: 36rpx 32rpx 52rpx;
+  padding: 44rpx 32rpx 60rpx;
   color: #fff;
   position: relative;
+  /* 顶部内发光，增加深度感 */
+  box-shadow: inset 0 40rpx 60rpx -20rpx rgba(255, 255, 255, 0.06);
 }
-.banner-title { font-size: 44rpx; font-weight: 700; color: #fbbf24; }
+.banner-title {
+  font-size: 44rpx; font-weight: 700; color: #fbbf24;
+  /* 金色标题的暖色文字阴影 */
+  text-shadow: 0 2rpx 8rpx rgba(251, 191, 36, 0.35), 0 0 24rpx rgba(251, 191, 36, 0.1);
+}
 .banner-mn { font-size: 24rpx; color: #d1fae5; margin-top: 4rpx; }
 .banner-sub { font-size: 24rpx; color: #a7f3d0; margin-top: 8rpx; }
 .banner-wave {
@@ -26,7 +32,9 @@
   font-size: 26rpx;
   color: #065f46;
   font-weight: 500;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.chat-list-entry:active { background: #d1fae5; }
 .entry-arrow { color: #059669; font-size: 32rpx; }
 
 .remind-bar {
@@ -40,6 +48,19 @@
   align-items: center;
   gap: 12rpx;
   border: 2rpx solid #fcd34d;
+  position: relative;
+  overflow: hidden;
+}
+/* 提醒条左侧装饰金线 */
+.remind-bar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12rpx;
+  bottom: 12rpx;
+  width: 6rpx;
+  border-radius: 0 4rpx 4rpx 0;
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
 }
 .remind-icon { font-size: 32rpx; flex-shrink: 0; }
 .remind-text { flex: 1; line-height: 1.4; }
@@ -51,10 +72,15 @@
   border-radius: 24rpx;
   padding: 40rpx 32rpx;
   text-align: center;
-  border: 3rpx solid #d1fae5;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+  /* 渐变边框效果 — 用内阴影模拟，替代单调实线 */
+  border: 2rpx solid rgba(209, 250, 229, 0.5);
+  box-shadow:
+    inset 0 0 0 2rpx rgba(209, 250, 229, 0.4),
+    inset 0 0 0 4rpx rgba(251, 191, 36, 0.06),
+    0 4rpx 16rpx rgba(0, 0, 0, 0.04),
+    0 12rpx 32rpx rgba(0, 0, 0, 0.03);
 }
-.voice-title { font-size: 34rpx; font-weight: 600; color: #064e3b; margin-bottom: 24rpx; }
+.voice-title { font-size: 34rpx; font-weight: 600; color: #022c22; margin-bottom: 24rpx; }
 
 .mic-btn {
   width: 160rpx; height: 160rpx;
@@ -65,8 +91,12 @@
   align-items: center;
   justify-content: center;
   border: 6rpx solid #fbbf24;
-  box-shadow: 0 8rpx 24rpx rgba(5,150,105,0.3);
-  transition: all 0.3s;
+  /* 双光环效果 — 空闲状态下微妙的金色辉光 */
+  box-shadow:
+    0 8rpx 24rpx rgba(5, 150, 105, 0.3),
+    0 0 0 12rpx rgba(251, 191, 36, 0.08),
+    0 0 0 24rpx rgba(251, 191, 36, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .mic-btn:active { transform: scale(0.95); }
 .mic-icon { font-size: 64rpx; }
@@ -74,12 +104,12 @@
 .mic-recording {
   background: linear-gradient(135deg, #dc2626, #ef4444);
   border-color: #fca5a5;
-  box-shadow: 0 0 0 8rpx rgba(239,68,68,0.2);
+  box-shadow: 0 0 0 8rpx rgba(239, 68, 68, 0.2);
   animation: pulse 1.5s ease-in-out infinite;
 }
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 8rpx rgba(239,68,68,0.2); }
-  50% { box-shadow: 0 0 0 20rpx rgba(239,68,68,0.1); }
+  0%, 100% { box-shadow: 0 0 0 8rpx rgba(239, 68, 68, 0.2); }
+  50% { box-shadow: 0 0 0 20rpx rgba(239, 68, 68, 0.1); }
 }
 
 .mic-label { font-size: 28rpx; color: #065f46; font-weight: 600; }
@@ -98,17 +128,21 @@
   padding: 16rpx 24rpx;
   font-size: 28rpx;
   color: #1f2937;
+  box-shadow: inset 0 2rpx 4rpx rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s;
 }
 .send-btn {
-  background: #059669;
+  background: linear-gradient(135deg, #059669, #047857);
   color: #fff;
   border-radius: 16rpx;
   padding: 16rpx 28rpx;
   font-size: 28rpx;
   font-weight: 600;
   white-space: nowrap;
+  box-shadow: 0 4rpx 12rpx rgba(5, 150, 105, 0.25);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.send-btn:active { opacity: 0.85; }
+.send-btn:active { opacity: 0.85; transform: scale(0.96); }
 
 .loading-bar {
   display: flex;
@@ -128,9 +162,10 @@
 }
 
 .hot-section { margin: 16rpx 24rpx 32rpx; }
-.hot-title { font-size: 28rpx; font-weight: 600; color: #064e3b; margin-bottom: 16rpx; }
+.hot-title { font-size: 28rpx; font-weight: 600; color: #022c22; margin-bottom: 16rpx; }
 .hot-item {
-  background: #fff;
+  /* 微妙的白到薄荷渐变背景 */
+  background: linear-gradient(135deg, #ffffff 0%, #fefffe 100%);
   border-radius: 16rpx;
   padding: 22rpx 24rpx;
   margin-bottom: 12rpx;
@@ -139,9 +174,15 @@
   gap: 16rpx;
   font-size: 28rpx;
   color: #1f2937;
+  /* 左侧金色边框，顶部圆角更大 */
   border-left: 6rpx solid #fbbf24;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
+  border-radius: 4rpx 16rpx 16rpx 4rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.03), 0 8rpx 20rpx rgba(0, 0, 0, 0.02);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.hot-item:active { background: #f0fdf4; }
+.hot-item:active {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  transform: scale(0.985);
+}
 .hot-icon { font-size: 36rpx; }
 .hot-text { flex: 1; line-height: 1.4; }

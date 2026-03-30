@@ -1,18 +1,44 @@
 .container { padding: 0 0 32rpx; }
 .page-header { padding: 28rpx 28rpx 20rpx; }
-.page-title { font-size: 40rpx; font-weight: 700; color: #064e3b; }
+.page-title { font-size: 40rpx; font-weight: 700; color: #022c22; }
 .page-subtitle { font-size: 24rpx; color: #6b7280; margin-top: 4rpx; }
 
 .group-title {
   font-size: 26rpx; font-weight: 600; color: #064e3b;
   margin: 20rpx 28rpx 10rpx; padding-bottom: 8rpx;
   border-bottom: 2rpx solid #d1fae5;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+/* 分组标题前的金色小圆点 */
+.group-title::before {
+  content: '';
+  display: inline-block;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 6rpx rgba(251, 191, 36, 0.4);
+  flex-shrink: 0;
 }
 
 .contact-card {
   display: flex; align-items: center; justify-content: space-between;
   background: #fff; margin: 0 24rpx 10rpx; border-radius: 16rpx;
-  padding: 24rpx; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
+  padding: 24rpx;
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.04), 0 6rpx 16rpx rgba(0, 0, 0, 0.03);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* 交替微妙背景色，产生视觉节奏感 */
+.contact-card:nth-child(even) {
+  background: #fefffe;
+}
+.contact-card:nth-child(odd) {
+  background: #fff;
+}
+.contact-card:active {
+  transform: scale(0.985);
 }
 .contact-name { font-size: 30rpx; font-weight: 600; color: #1f2937; }
 .contact-phone { font-size: 26rpx; color: #059669; margin-top: 4rpx; }
@@ -22,14 +48,28 @@
   font-size: 36rpx; width: 60rpx; height: 60rpx;
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%; background: #f3f4f6;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.fav-active { background: #fef3c7; }
+.fav-active {
+  background: #fef3c7;
+  /* 收藏星星激活时的暖色光晕 */
+  box-shadow: 0 0 12rpx rgba(251, 191, 36, 0.35), 0 0 24rpx rgba(251, 191, 36, 0.15);
+}
 .call-btn {
   font-size: 32rpx; width: 80rpx; height: 60rpx;
   display: flex; align-items: center; justify-content: center;
-  border-radius: 12rpx; background: #059669; color: #fff;
+  border-radius: 12rpx;
+  /* 渐变 + 立体阴影的拨号按钮 */
+  background: linear-gradient(135deg, #059669, #047857);
+  color: #fff;
+  box-shadow: 0 3rpx 0 #065f46, 0 4rpx 12rpx rgba(5, 150, 105, 0.3);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.call-btn:active { opacity: 0.85; }
+.call-btn:active {
+  opacity: 0.9;
+  transform: translateY(2rpx);
+  box-shadow: 0 1rpx 0 #065f46, 0 2rpx 6rpx rgba(5, 150, 105, 0.2);
+}
 
 .empty-state { text-align: center; padding: 80rpx; color: #9ca3af; font-size: 28rpx; }
 
