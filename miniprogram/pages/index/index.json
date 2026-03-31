@@ -1,5 +1,6 @@
 {
-  "navigationBarTitleText": "ᠮᠠᠯᠵᠢᠬᠤ ᠲᠣᠩ · 牧智通",
-  "navigationBarBackgroundColor": "#064e3b",
-  "navigationBarTextStyle": "white"
+  "navigationBarTitleText": "牧智通 · 政务AI助手",
+  "navigationBarBackgroundColor": "#a00000",
+  "navigationBarTextStyle": "white",
+  "navigationStyle": "custom"
 }

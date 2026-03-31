@@ -5,6 +5,15 @@ Page({
   data: {
     lang: 'zh',
     chats: [],
+    filteredChats: [],
+    searchText: '',
+    activeTab: 'all',
+    statusBarHeight: 20,
+  },
+
+  onLoad() {
+    const sysInfo = wx.getSystemInfoSync()
+    this.setData({ statusBarHeight: sysInfo.statusBarHeight || 20 })
   },
 
   onShow() {
@@ -14,19 +23,31 @@ Page({
 
   loadChats() {
     const allChats = chatStore.getAllChats()
-    const chats = allChats.map(chat => {
+    const chats = allChats.map((chat, idx) => {
       const lastMsg = chat.messages.length > 0
         ? chat.messages[chat.messages.length - 1].content
         : ''
+      // 模拟状态：交替展示不同状态
+      let statusText = '已读'
+      let statusClass = 'badge-read'
+      if (idx === 0) { statusText = '新回复'; statusClass = 'badge-new' }
+      else if (idx % 3 === 0) { statusText = '已解决'; statusClass = 'badge-resolved' }
+
       return {
         id: chat.id,
         title: chat.title,
         lastMessage: lastMsg.length > 30 ? lastMsg.substring(0, 30) + '...' : lastMsg,
         timeLabel: this.formatTime(chat.updatedAt),
         msgCount: chat.messages.length,
+        isAI: true,
+        initial: 'U',
+        statusText,
+        statusClass,
+        responder: 'AI政策顾问',
       }
     })
-    this.setData({ chats })
+    this.setData({ chats, filteredChats: chats })
+    this.applyFilter()
   },
 
   formatTime(timestamp) {
@@ -42,6 +63,38 @@ Page({
     } else {
       return `${date.getMonth() + 1}月${date.getDate()}日`
     }
+  },
+
+  onTabTap(e) {
+    const tab = e.currentTarget.dataset.tab
+    this.setData({ activeTab: tab })
+    this.applyFilter()
+  },
+
+  onSearchInput(e) {
+    this.setData({ searchText: e.detail.value })
+    this.applyFilter()
+  },
+
+  applyFilter() {
+    let list = this.data.chats
+    const tab = this.data.activeTab
+    const search = this.data.searchText.trim().toLowerCase()
+
+    if (tab === 'unread') {
+      list = list.filter(c => c.statusClass === 'badge-new')
+    } else if (tab === 'resolved') {
+      list = list.filter(c => c.statusClass === 'badge-resolved')
+    }
+
+    if (search) {
+      list = list.filter(c =>
+        c.title.toLowerCase().includes(search) ||
+        c.lastMessage.toLowerCase().includes(search)
+      )
+    }
+
+    this.setData({ filteredChats: list })
   },
 
   onChatTap(e) {

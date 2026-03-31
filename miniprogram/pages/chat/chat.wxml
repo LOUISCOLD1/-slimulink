@@ -5,21 +5,34 @@
       <!-- 用户消息 -->
       <view class="msg-user" wx:if="{{item.role === 'user'}}">
         <view class="bubble-user">{{item.content}}</view>
+        <view class="msg-time-right">{{item.timeLabel || '刚刚'}}</view>
       </view>
       <!-- AI消息 -->
       <view class="msg-bot" wx:else>
-        <view class="bot-avatar">🤖</view>
+        <!-- 官方权威解读徽章 -->
+        <view class="official-badge">
+          <text class="badge-icon">&#x2714;</text>
+          <text class="badge-text">官方权威解读</text>
+        </view>
         <view class="bubble-bot">
           <rich-text nodes="{{item.contentHtml || item.content}}"></rich-text>
-          <!-- 操作按钮 -->
+          <!-- 操作按钮行 -->
           <view class="bot-actions">
-            <view class="action-btn play-btn" bindtap="playVoice" data-index="{{index}}" data-text="{{item.content}}">
-              <text>{{playingIndex === index ? '⏹️ 停止' : '🔊 播放语音'}}</text>
+            <view class="action-link" bindtap="playVoice" data-index="{{index}}" data-text="{{item.content}}">
+              <text>&#x1F4C4; 查看原始文件</text>
+            </view>
+            <view class="action-icons">
+              <view class="icon-btn" bindtap="playVoice" data-index="{{index}}" data-text="{{item.content}}">
+                <text>{{playingIndex === index ? '&#x23F9;' : '&#x1F44D;'}}</text>
+              </view>
+              <view class="icon-btn">
+                <text>&#x1F4E4;</text>
+              </view>
             </view>
           </view>
           <!-- 来源 -->
           <view class="bot-source" wx:if="{{item.sources && item.sources.length > 0}}">
-            <text class="source-label">📄 {{lang === 'zh' ? '来源' : 'ᠡᠬᠢ ᠰᠤᠷᠪᠤᠯᠵᠢ'}}：</text>
+            <text class="source-label">&#x1F4C4; {{lang === 'zh' ? '来源' : 'ᠡᠬᠢ ᠰᠤᠷᠪᠤᠯᠵᠢ'}}：</text>
             <text class="source-name" wx:for="{{item.sources}}" wx:for-item="src" wx:key="*this">{{src}}</text>
           </view>
         </view>
@@ -29,7 +42,6 @@
     <!-- AI 思考中 -->
     <view class="msg-wrapper" wx:if="{{isThinking}}" id="msg-thinking">
       <view class="msg-bot">
-        <view class="bot-avatar">🤖</view>
         <view class="bubble-bot thinking">
           <view class="thinking-dots">
             <view class="dot"></view>
@@ -41,16 +53,32 @@
     </view>
 
     <!-- 底部间距 -->
-    <view style="height: 120rpx;"></view>
+    <view style="height: 260rpx;"></view>
   </scroll-view>
+
+  <!-- 建议词条滚动行 -->
+  <view class="suggestion-bar">
+    <scroll-view scroll-x class="suggestion-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="suggestion-chip" bindtap="onSuggestionTap" data-q="社保相关政策有哪些？">社保相关</view>
+      <view class="suggestion-chip" bindtap="onSuggestionTap" data-q="医保查询和报销怎么办？">医保查询</view>
+      <view class="suggestion-chip" bindtap="onSuggestionTap" data-q="公积金提取需要什么条件？">公积金提取</view>
+      <view class="suggestion-chip" bindtap="onSuggestionTap" data-q="退休年龄怎么计算？">退休年龄计算</view>
+    </scroll-view>
+  </view>
 
   <!-- 底部输入栏 -->
   <view class="input-bar">
-    <input class="input-field" placeholder="{{lang === 'zh' ? '继续提问...' : 'ᠦᠷᠭᠦᠯᠵᠢᠯᠡᠨ ᠠᠰᠠᠭᠤᠬᠤ...'}}"
+    <view class="input-add-btn">
+      <text class="add-icon">+</text>
+    </view>
+    <input class="input-field" placeholder="{{lang === 'zh' ? '输入您的问题...' : 'ᠠᠰᠠᠭᠤᠯᠲᠠ ᠪᠢᠴᠢᠬᠦ...'}}"
       value="{{inputText}}" bindinput="onInput" bindconfirm="onSend"
-      disabled="{{isThinking}}" />
+      disabled="{{isThinking}}" confirm-type="send" />
     <view class="input-mic {{isRecording ? 'mic-active' : ''}}" bindtap="onMicTap">
-      <text>🎙️</text>
+      <text class="mic-text">&#x1F3A4;</text>
+    </view>
+    <view class="input-send-btn" bindtap="onSend">
+      <text class="send-arrow">&#x2191;</text>
     </view>
   </view>
 </view>

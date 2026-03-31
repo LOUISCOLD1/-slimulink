@@ -14,6 +14,7 @@ Page({
     reminder: '',
     reminderQuestion: '',
     chatCount: 0,
+    statusBarHeight: 20,
 
     hotQuestions: [
       { icon: '💰', zh: '低保每个月多少钱？怎么申请？', mn: 'ᠠᠮᠢᠳᠤᠷᠠᠯ ᠤᠨ ᠪᠠᠲᠤᠯᠠᠭᠠᠵᠢ ᠬᠡᠳᠦᠢ ᠪᠤᠢ?' },
@@ -28,6 +29,9 @@ Page({
   onLoad() {
     this.setData({ lang: app.globalData.lang })
     this.loadConfig()
+    // 获取状态栏高度，用于自定义导航栏
+    const sysInfo = wx.getSystemInfoSync()
+    this.setData({ statusBarHeight: sysInfo.statusBarHeight || 20 })
   },
 
   onShow() {
@@ -87,7 +91,6 @@ Page({
     const result = await recorder.toggleRecord()
 
     if (result === null) {
-      // 录音已开始（或权限被拒）
       this.setData({ isRecording: recorder.isRecording() })
       if (recorder.isRecording()) {
         wx.vibrateShort({ type: 'medium' })
@@ -95,7 +98,6 @@ Page({
       return
     }
 
-    // 录音已停止，result 是文件路径
     this.setData({ isRecording: false, isLoading: true })
 
     try {
@@ -120,23 +122,14 @@ Page({
     this.setData({ isLoading: true, inputText: '' })
 
     try {
-      // 1. 创建对话
       const chatId = chatStore.createChat(question)
-
-      // 2. 添加用户消息
       chatStore.addMessage(chatId, { role: 'user', content: question })
-
-      // 3. 调用 AI
       const result = await api.askPolicy(question)
-
-      // 4. 添加 AI 回复
       chatStore.addMessage(chatId, {
         role: 'bot',
         content: result.answer,
         sources: result.sources || [],
       })
-
-      // 5. 跳转到聊天页
       wx.navigateTo({
         url: `/pages/chat/chat?chatId=${chatId}`,
       })
@@ -149,7 +142,22 @@ Page({
   },
 
   goToChatList() {
-    wx.navigateTo({ url: '/pages/chat-list/chat-list' })
+    wx.switchTab({ url: '/pages/chat-list/chat-list' })
+  },
+
+  goToPolicies() {
+    wx.navigateTo({ url: '/pages/policies/policies' })
+  },
+
+  goToChat() {
+    // 创建新空对话或直接进入 AI 聊天
+    const chatId = chatStore.createChat('新对话')
+    wx.navigateTo({ url: `/pages/chat/chat?chatId=${chatId}` })
+  },
+
+  makeCall(e) {
+    const phone = e.currentTarget.dataset.phone || '12345'
+    wx.makePhoneCall({ phoneNumber: phone, fail() {} })
   },
 
   onReminderTap() {

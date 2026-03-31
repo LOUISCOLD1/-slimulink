@@ -1,56 +1,95 @@
-<view class="container">
-  <!-- Banner -->
-  <view class="banner">
-    <view class="banner-title">牧民政策助手</view>
-    <view class="banner-mn">ᠮᠠᠯᠴᠢᠨ ᠤ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠤᠨ ᠲᠤᠰᠠᠯᠠᠭᠴᠢ</view>
-    <view class="banner-sub">{{lang === 'zh' ? '开口就能问政策' : 'ᠠᠮᠠ ᠨᠡᠭᠡᠭᠡᠪᠡᠯ ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠠᠰᠠᠭᠤᠵᠤ ᠪᠣᠯᠤᠨ᠎ᠠ'}}</view>
-    <view class="banner-wave"></view>
-  </view>
-
-  <!-- 对话列表入口 -->
-  <view class="chat-list-entry" bindtap="goToChatList" wx:if="{{chatCount > 0}}">
-    <text>📝 {{lang === 'zh' ? '查看历史对话' : 'ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ ᠦᠵᠡᠬᠦ'}} ({{chatCount}})</text>
-    <text class="entry-arrow">›</text>
-  </view>
-
-  <!-- 提醒条 -->
-  <view class="remind-bar" wx:if="{{reminder}}" bindtap="onReminderTap">
-    <text class="remind-icon">📢</text>
-    <text class="remind-text">{{reminder}}</text>
-    <text class="remind-arrow">›</text>
-  </view>
-
-  <!-- 语音卡片 -->
-  <view class="voice-card">
-    <view class="voice-title">{{lang === 'zh' ? '想了解什么政策？' : 'ᠶᠠᠭᠤ ᠠᠰᠠᠭᠤᠬᠤ ᠪᠤᠢ?'}}</view>
-    <view class="mic-btn {{isRecording ? 'mic-recording' : ''}}" bindtap="onMicTap">
-      <text class="mic-icon">🎙️</text>
-    </view>
-    <view class="mic-label" wx:if="{{!isRecording}}">{{lang === 'zh' ? '点击说话' : 'ᠳᠠᠷᠤᠵᠤ ᠶᠠᠷᠢ'}}</view>
-    <view class="mic-label mic-label-active" wx:else>{{lang === 'zh' ? '点击停止' : 'ᠳᠠᠷᠤᠵᠤ ᠵᠣᠭᠰᠣᠬᠤ'}}</view>
-  </view>
-
-  <!-- 文字输入 -->
-  <view class="input-row">
-    <input class="text-input" placeholder="{{lang === 'zh' ? '也可以打字提问...' : 'ᠠᠰᠠᠭᠤᠯᠲᠠ ᠪᠢᠴᠢᠬᠦ...'}}" value="{{inputText}}" bindinput="onInput" bindconfirm="onTextSubmit" disabled="{{isLoading}}" />
-    <view class="send-btn" bindtap="onTextSubmit" wx:if="{{inputText && !isLoading}}">
-      {{lang === 'zh' ? '发送' : 'ᠢᠯᠡᠭᠡᠬᠦ'}}
+<view class="page-root">
+  <!-- 顶部状态栏 + 导航栏：红色-700 背景 -->
+  <view class="top-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-bar">
+      <view class="nav-left">
+        <text class="nav-location-icon">&#x1F4CD;</text>
+        <text class="nav-location-text">内蒙古自治区</text>
+      </view>
+      <view class="nav-center">
+        <text class="nav-title">牧智通 · 政务AI助手</text>
+      </view>
     </view>
   </view>
 
-  <!-- 加载中 -->
-  <view class="loading-bar" wx:if="{{isLoading}}">
-    <view class="loading-spinner-small"></view>
-    <text>{{lang === 'zh' ? '正在查询政策...' : 'ᠲᠥᠷᠥ ᠵᠢᠷᠤᠮ ᠬᠠᠢᠵᠤ ᠪᠠᠢᠨ᠎ᠠ...'}}</text>
-  </view>
+  <!-- 占位高度，防止内容被固定导航栏遮挡 -->
+  <view style="height: {{statusBarHeight + 44}}px;"></view>
 
-  <!-- 热门问题 -->
-  <view class="hot-section">
-    <view class="hot-title">🔥 {{lang === 'zh' ? '热门问题' : 'ᠬᠠᠯᠠᠭᠤᠨ ᠠᠰᠠᠭᠤᠯᠲᠠ'}}</view>
-    <view class="hot-item" wx:for="{{hotQuestions}}" wx:key="index"
-      bindtap="onHotQuestion" data-question="{{lang === 'zh' ? item.zh : item.mn}}">
-      <text class="hot-icon">{{item.icon}}</text>
-      <text class="hot-text">{{lang === 'zh' ? item.zh : item.mn}}</text>
+  <scroll-view scroll-y class="scroll-body" enhanced show-scrollbar="{{false}}">
+    <!-- 英雄横幅卡片 -->
+    <view class="hero-banner">
+      <view class="hero-gradient-overlay"></view>
+      <view class="hero-badge">重要通告</view>
+      <view class="hero-title">2026年草原生态保护补助奖励政策全面启动</view>
+      <view class="hero-sub">内蒙古自治区农牧厅 · 惠牧惠农</view>
     </view>
+
+    <!-- 快捷入口：2列网格 -->
+    <view class="quick-grid">
+      <view class="quick-item quick-item-gold" bindtap="makeCall" data-phone="12345">
+        <text class="quick-icon">&#x1F4DE;</text>
+        <view class="quick-text-wrap">
+          <text class="quick-label">一键拨打村委会</text>
+          <text class="quick-desc">便民服务热线</text>
+        </view>
+      </view>
+      <view class="quick-item quick-item-red" bindtap="goToPolicies">
+        <text class="quick-icon">&#x1F4D6;</text>
+        <view class="quick-text-wrap">
+          <text class="quick-label">政务指南</text>
+          <text class="quick-desc">政策查询大全</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- AI 政务顾问卡片 -->
+    <view class="ai-card" bindtap="goToChat">
+      <view class="ai-card-left">
+        <text class="ai-robot-icon">&#x1F916;</text>
+        <text class="ai-service-label">INTELLIGENT SERVICE</text>
+        <text class="ai-card-title">AI 政务顾问</text>
+        <text class="ai-card-sub">24小时在线 · 智能解答政策疑问</text>
+      </view>
+      <view class="ai-card-right">
+        <view class="ai-arrow-circle">
+          <text class="ai-arrow">&#x2192;</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 最新政策流 -->
+    <view class="policy-stream-header">
+      <view class="policy-stream-bar"></view>
+      <text class="policy-stream-title">最新政策流</text>
+    </view>
+
+    <view class="policy-stream-card policy-border-red" bindtap="onHotQuestion" data-question="草原生态保护补贴怎么申报？">
+      <view class="policy-dept-badge">农牧厅</view>
+      <view class="policy-card-date">2026-03-28</view>
+      <view class="policy-card-title">关于做好2026年草原生态保护补助奖励政策落实工作的通知</view>
+      <view class="policy-card-desc">进一步加大草原生态保护力度，完善草原补奖政策体系，保障牧民合法权益。</view>
+    </view>
+
+    <view class="policy-stream-card policy-border-gold" bindtap="onHotQuestion" data-question="低保每个月多少钱？怎么申请？">
+      <view class="policy-dept-badge badge-gold">民政厅</view>
+      <view class="policy-card-date">2026-03-25</view>
+      <view class="policy-card-title">内蒙古自治区最低生活保障实施办法（2026年修订）</view>
+      <view class="policy-card-desc">调整城乡低保标准，扩大保障范围，简化申请流程，实现应保尽保。</view>
+    </view>
+
+    <view class="policy-stream-card policy-border-red" bindtap="onHotQuestion" data-question="医保怎么报销？比例是多少？">
+      <view class="policy-dept-badge">医保局</view>
+      <view class="policy-card-date">2026-03-20</view>
+      <view class="policy-card-title">城乡居民基本医疗保险待遇调整方案</view>
+      <view class="policy-card-desc">提高门诊报销比例，降低住院起付线，减轻群众就医负担。</view>
+    </view>
+
+    <!-- 底部留白 -->
+    <view style="height: 180rpx;"></view>
+  </scroll-view>
+
+  <!-- 浮动按钮 FAB -->
+  <view class="fab" bindtap="goToChat">
+    <text class="fab-icon">&#x1F464;</text>
   </view>
 </view>

@@ -9,21 +9,21 @@
     "pages/settings/settings"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#064e3b",
+    "navigationBarBackgroundColor": "#a00000",
     "navigationBarTitleText": "牧智通",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#f0fdf4",
+    "backgroundColor": "#f9f9f9",
     "backgroundTextStyle": "dark"
   },
   "tabBar": {
     "color": "#999999",
-    "selectedColor": "#059669",
+    "selectedColor": "#a00000",
     "backgroundColor": "#ffffff",
     "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "问答",
+        "text": "首页",
         "iconPath": "static/images/tab-home.png",
         "selectedIconPath": "static/images/tab-home-active.png"
       },
@@ -41,7 +41,7 @@
       },
       {
         "pagePath": "pages/settings/settings",
-        "text": "设置",
+        "text": "我的",
         "iconPath": "static/images/tab-settings.png",
         "selectedIconPath": "static/images/tab-settings-active.png"
       }

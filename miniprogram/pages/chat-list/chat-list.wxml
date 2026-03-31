@@ -1,27 +1,65 @@
-<view class="container">
-  <!-- 新建对话按钮 -->
-  <view class="new-chat-btn" bindtap="onNewChat">＋ {{lang === 'zh' ? '开始新对话' : 'ᠰᠢᠨ᠎ᠡ ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ'}}</view>
+<view class="page-root">
+  <!-- 顶部导航栏：毛玻璃效果 -->
+  <view class="top-bar-glass" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-bar">
+      <view class="nav-title-area">
+        <text class="nav-title-red">内蒙古 · 咨询服务</text>
+      </view>
+      <view class="nav-right-icon">
+        <text>&#x1F50D;</text>
+      </view>
+    </view>
+  </view>
 
-  <!-- 对话列表 -->
-  <view wx:if="{{chats.length > 0}}">
-    <view class="chat-item" wx:for="{{chats}}" wx:key="id"
+  <view style="height: {{statusBarHeight + 44}}px;"></view>
+
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <text class="search-icon">&#x1F50D;</text>
+    <input class="search-input" placeholder="搜索咨询记录..."
+      bindinput="onSearchInput" value="{{searchText}}" />
+  </view>
+
+  <!-- 分类标签 -->
+  <scroll-view scroll-x class="category-tabs" enhanced show-scrollbar="{{false}}">
+    <view class="tab-pill {{activeTab === 'all' ? 'tab-active' : ''}}" bindtap="onTabTap" data-tab="all">全部</view>
+    <view class="tab-pill {{activeTab === 'unread' ? 'tab-active' : ''}}" bindtap="onTabTap" data-tab="unread">未读</view>
+    <view class="tab-pill {{activeTab === 'resolved' ? 'tab-active' : ''}}" bindtap="onTabTap" data-tab="resolved">已解决</view>
+  </scroll-view>
+
+  <!-- 咨询卡片列表 -->
+  <view wx:if="{{filteredChats.length > 0}}">
+    <view class="consult-card" wx:for="{{filteredChats}}" wx:key="id"
       bindtap="onChatTap" data-id="{{item.id}}"
       bindlongpress="onDeleteChat" data-id="{{item.id}}">
-      <view class="chat-icon">💬</view>
-      <view class="chat-info">
-        <view class="chat-title">{{item.title}}</view>
-        <view class="chat-preview">{{item.lastMessage}}</view>
+      <view class="consult-avatar {{item.isAI ? 'avatar-gold' : 'avatar-gray'}}">
+        <text class="avatar-text">{{item.isAI ? 'AI' : item.initial}}</text>
       </view>
-      <view class="chat-meta">
-        <view class="chat-time">{{item.timeLabel}}</view>
-        <view class="chat-badge">{{item.msgCount}}{{lang === 'zh' ? '条' : ''}}</view>
+      <view class="consult-body">
+        <view class="consult-top-row">
+          <text class="consult-title">{{item.title}}</text>
+          <view class="status-badge {{item.statusClass}}">{{item.statusText}}</view>
+        </view>
+        <text class="consult-preview">{{item.lastMessage}}</text>
+        <view class="consult-bottom-row">
+          <text class="consult-date">{{item.timeLabel}}</text>
+          <text class="consult-responder">{{item.responder}}</text>
+        </view>
       </view>
     </view>
   </view>
 
   <!-- 空状态 -->
-  <view class="empty-state" wx:else>
-    <view class="empty-icon">💬</view>
-    <view class="empty-text">{{lang === 'zh' ? '还没有对话，去提个问题吧' : 'ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ ᠪᠠᠢᠬᠤ ᠦᠭᠡᠢ'}}</view>
+  <view class="empty-state" wx:if="{{filteredChats.length === 0}}">
+    <text class="empty-icon-text">&#x1F4AC;</text>
+    <view class="empty-text">{{lang === 'zh' ? '暂无咨询记录' : 'ᠶᠠᠷᠢᠯᠴᠠᠯᠭ᠎ᠠ ᠪᠠᠢᠬᠤ ᠦᠭᠡᠢ'}}</view>
+  </view>
+
+  <!-- 底部留白 -->
+  <view style="height: 160rpx;"></view>
+
+  <!-- FAB 新增按钮 -->
+  <view class="fab" bindtap="onNewChat">
+    <text class="fab-plus">+</text>
   </view>
 </view>

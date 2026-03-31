@@ -1,106 +1,213 @@
-.container { padding: 0 0 32rpx; }
-
-.new-chat-btn {
-  background: linear-gradient(135deg, #059669, #047857);
-  color: #fff;
-  border-radius: 20rpx;
-  padding: 28rpx;
-  font-size: 32rpx;
-  font-weight: 600;
-  text-align: center;
-  margin: 24rpx 24rpx 20rpx;
-  box-shadow: 0 4rpx 8rpx rgba(5, 150, 105, 0.2), 0 12rpx 32rpx rgba(5, 150, 105, 0.2);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-/* 按钮上的微光扫过效果 */
-.new-chat-btn::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.15),
-    transparent
-  );
-  animation: shimmer 3s ease-in-out infinite;
-}
-@keyframes shimmer {
-  0% { left: -100%; }
-  50% { left: 150%; }
-  100% { left: 150%; }
-}
-.new-chat-btn:active {
-  opacity: 0.85;
-  transform: scale(0.98);
-  box-shadow: 0 2rpx 4rpx rgba(5, 150, 105, 0.15), 0 6rpx 16rpx rgba(5, 150, 105, 0.15);
+.page-root {
+  min-height: 100vh;
+  background: var(--surface);
 }
 
-.chat-item {
+/* ===== 毛玻璃顶部栏 ===== */
+.top-bar-glass {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 999;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border-radius: 0 0 24rpx 24rpx;
+}
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+  padding: 0 28rpx;
+}
+.nav-title-area {
+  flex: 1;
+}
+.nav-title-red {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--primary);
+}
+.nav-right-icon {
+  font-size: 36rpx;
+  padding: 8rpx;
+}
+
+/* ===== 搜索栏 ===== */
+.search-bar {
+  margin: 16rpx 24rpx;
+  background: var(--surface-container-lowest);
+  border-radius: 24rpx;
+  padding: 18rpx 24rpx;
   display: flex;
   align-items: center;
   gap: 16rpx;
-  background: #fff;
-  margin: 0 24rpx 12rpx;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.04), 0 6rpx 16rpx rgba(0, 0, 0, 0.03);
-  /* 左侧金色指示线 */
-  border-left: 4rpx solid rgba(251, 191, 36, 0.4);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-card);
 }
-.chat-item:active {
-  background: #fafffe;
-  transform: scale(0.985);
+.search-icon { font-size: 28rpx; flex-shrink: 0; }
+.search-input { flex: 1; font-size: 28rpx; color: var(--on-surface); }
+
+/* ===== 分类标签 ===== */
+.category-tabs {
+  white-space: nowrap;
+  padding: 12rpx 24rpx 20rpx;
+}
+.tab-pill {
+  display: inline-block;
+  padding: 14rpx 32rpx;
+  margin-right: 16rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+  transition: all 0.2s;
+}
+.tab-active {
+  background: var(--primary-vibrant);
+  color: #ffffff;
 }
 
-.chat-icon { font-size: 40rpx; flex-shrink: 0; }
-.chat-info { flex: 1; overflow: hidden; }
-.chat-title {
+/* ===== 咨询卡片 ===== */
+.consult-card {
+  display: flex;
+  gap: 20rpx;
+  margin: 0 24rpx 16rpx;
+  padding: 28rpx;
+  background: var(--surface-container-lowest);
+  border-radius: 28rpx;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s;
+}
+.consult-card:active {
+  transform: scale(0.98);
+}
+
+/* 头像圆 */
+.consult-avatar {
+  width: 88rpx; height: 88rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.avatar-gold {
+  background: linear-gradient(135deg, #fcd400, #705d00);
+}
+.avatar-gray {
+  background: var(--surface-container-high);
+}
+.avatar-text {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #ffffff;
+}
+.avatar-gray .avatar-text {
+  color: var(--on-surface-variant);
+}
+
+/* 卡片主体 */
+.consult-body {
+  flex: 1;
+  min-width: 0;
+}
+.consult-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+.consult-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--on-surface);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.chat-preview {
-  font-size: 24rpx;
-  color: #9ca3af;
-  margin-top: 4rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  flex: 1;
+  margin-right: 16rpx;
 }
 
-.chat-meta {
-  flex-shrink: 0;
-  text-align: right;
-}
-.chat-time {
-  font-size: 22rpx;
-  color: #9ca3af;
-  letter-spacing: 1rpx;
-}
-.chat-badge {
+/* 状态徽章 */
+.status-badge {
   font-size: 20rpx;
-  color: #059669;
-  background: #ecfdf5;
-  padding: 2rpx 12rpx;
-  border-radius: 12rpx;
-  margin-top: 6rpx;
-  display: inline-block;
-  font-weight: 500;
+  font-weight: 600;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  flex-shrink: 0;
+}
+.badge-new {
+  background: rgba(206, 0, 0, 0.1);
+  color: var(--primary-vibrant);
+}
+.badge-read {
+  background: var(--surface-container);
+  color: var(--text-muted);
+}
+.badge-resolved {
+  background: var(--surface-container);
+  color: var(--text-muted);
 }
 
+.consult-preview {
+  font-size: 24rpx;
+  color: var(--on-surface-variant);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  margin-bottom: 8rpx;
+}
+.consult-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.consult-date {
+  font-size: 22rpx;
+  color: var(--text-muted);
+}
+.consult-responder {
+  font-size: 22rpx;
+  color: var(--on-surface-variant);
+}
+
+/* ===== 空状态 ===== */
 .empty-state {
   text-align: center;
   padding: 120rpx 48rpx;
 }
-.empty-icon { font-size: 80rpx; margin-bottom: 16rpx; }
-.empty-text { font-size: 28rpx; color: #9ca3af; }
+.empty-icon-text {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 16rpx;
+}
+.empty-text {
+  font-size: 28rpx;
+  color: var(--text-muted);
+}
+
+/* ===== FAB ===== */
+.fab {
+  position: fixed;
+  right: 32rpx;
+  bottom: 200rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  background: var(--primary-vibrant);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 32rpx rgba(206, 0, 0, 0.35);
+  z-index: 100;
+  transition: transform 0.2s;
+}
+.fab:active { transform: scale(0.9); }
+.fab-plus {
+  font-size: 56rpx;
+  color: #ffffff;
+  font-weight: 300;
+  line-height: 1;
+}

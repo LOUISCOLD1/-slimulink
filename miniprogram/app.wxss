@@ -1,105 +1,126 @@
-/* 草原绿金主题 — 全局样式（Organic Grassland Luxury） */
+/* 中国政务红金主题 — 全局样式（China Civic Red-Gold: "The Modern Monolith"） */
 page {
-  --green-dark: #064e3b;
-  --green-mid: #047857;
-  --green-light: #059669;
-  --green-bg: #f0fdf4;
-  --green-deepest: #022c22;
-  --gold: #fbbf24;
-  --gold-warm: #f59e0b;
-  --gold-bg: #fffbeb;
-  --gold-border: #fcd34d;
-  --gold-text: #78350f;
-  --white: #ffffff;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
-  --border: #d1fae5;
-  --shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04), 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
-  --shadow-tight: 0 1rpx 4rpx rgba(0, 0, 0, 0.08);
-  --shadow-diffuse: 0 12rpx 32rpx rgba(0, 0, 0, 0.05);
-  --shadow-layered: 0 1rpx 4rpx rgba(0, 0, 0, 0.08), 0 12rpx 32rpx rgba(0, 0, 0, 0.05);
+  /* 主色：红色体系 */
+  --primary: #a00000;
+  --primary-vibrant: #ce0000;
+  --primary-dark: #800000;
+  --primary-container: #ffdad5;
 
-  background-color: var(--green-bg);
-  /* 在绿色背景上叠加细微的噪点纹理，增加有机质感 */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  /* 金色：辅助色 */
+  --secondary: #705d00;
+  --secondary-container: #fcd400;
+  --gold-text: #705d00;
+
+  /* 表面色层级 */
+  --surface: #f9f9f9;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f3f3f3;
+  --surface-container: #eeeeee;
+  --surface-container-high: #e8e8e8;
+  --surface-container-highest: #e2e2e2;
+
+  /* 文字色 */
+  --on-surface: #1a1c1c;
+  --on-surface-variant: #5e3f3a;
+  --text-muted: #9ca3af;
+
+  /* 功能色 */
+  --white: #ffffff;
+  --error: #ba1a1a;
+
+  /* 阴影：仅环境阴影 */
+  --shadow-ambient: 0 24rpx 64rpx rgba(26, 28, 28, 0.04);
+  --shadow-card: 0 4rpx 32rpx rgba(26, 28, 28, 0.04);
+
+  /* 毛玻璃 */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-blur: blur(20px);
+
+  background-color: var(--surface);
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  color: var(--text-primary);
+  color: var(--on-surface);
+  font-size: 28rpx;
+  line-height: 1.6;
 }
 
 /* 字体大小级别 */
-.font-large page, page { font-size: 32rpx; }
-.font-xlarge page { font-size: 36rpx; }
-.font-xxlarge page { font-size: 40rpx; }
+.font-large page, page { font-size: 28rpx; }
+.font-xlarge page { font-size: 32rpx; }
+.font-xxlarge page { font-size: 36rpx; }
 
-/* 过渡工具类 */
+/* 过渡工具 */
 .ease { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
-/* 工具类 */
-.text-lg { font-size: 36rpx; }
-.text-xl { font-size: 40rpx; }
-.text-2xl { font-size: 48rpx; }
-.text-3xl { font-size: 56rpx; }
-.text-bold { font-weight: bold; }
+/* 文字工具类 */
+.text-lg { font-size: 32rpx; }
+.text-xl { font-size: 36rpx; }
+.text-2xl { font-size: 44rpx; }
+.text-3xl { font-size: 52rpx; }
+.text-bold { font-weight: 700; }
 .text-center { text-align: center; }
-.text-gray { color: var(--text-secondary); }
-.text-green { color: var(--green-light); }
-.text-gold { color: var(--gold); }
+.text-muted { color: var(--text-muted); }
+.text-red { color: var(--primary); }
+.text-gold { color: var(--secondary); }
 
+/* 容器 */
 .container {
   padding: 0;
   min-height: 100vh;
   box-sizing: border-box;
-  background: var(--green-bg);
+  background: var(--surface);
 }
 
+/* 通用卡片 — 无 1px 边框，仅用背景色差和阴影区分层级 */
 .card {
-  background: var(--white);
-  border-radius: 20rpx;
+  background: var(--surface-container-lowest);
+  border-radius: 24rpx;
   padding: 32rpx;
   margin: 16rpx 24rpx;
-  box-shadow: var(--shadow-layered);
+  box-shadow: var(--shadow-card);
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .card:active {
   transform: scale(0.985);
-  box-shadow: var(--shadow-tight);
 }
 
-.btn-green {
-  background: linear-gradient(135deg, var(--green-light), var(--green-mid));
-  color: white;
-  border-radius: 16rpx;
+/* 红色主按钮 — 48px 最小高度 */
+.btn-red {
+  background: var(--primary-vibrant);
+  color: var(--white);
+  border-radius: 12rpx;
   padding: 24rpx 48rpx;
-  font-size: 36rpx;
-  font-weight: bold;
+  font-size: 30rpx;
+  font-weight: 600;
   text-align: center;
   border: none;
-  box-shadow: 0 4rpx 12rpx rgba(5, 150, 105, 0.3);
+  min-height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-ambient);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.btn-green:active {
+.btn-red:active {
   opacity: 0.85;
   transform: scale(0.97);
-  box-shadow: 0 2rpx 6rpx rgba(5, 150, 105, 0.2);
 }
 
+/* 分割 — 用背景色差代替边框 */
 .divider {
-  height: 2rpx;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
-  margin: 24rpx 0;
+  height: 16rpx;
+  background: var(--surface);
 }
 
 /* 加载状态 */
 .loading-state {
   text-align: center;
   padding: 80rpx;
-  color: var(--text-secondary);
+  color: var(--on-surface-variant);
 }
 .loading-spinner {
   width: 40rpx; height: 40rpx;
-  border: 4rpx solid #e5e7eb;
-  border-top: 4rpx solid var(--green-light);
+  border: 4rpx solid var(--surface-container-high);
+  border-top: 4rpx solid var(--primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 16rpx;

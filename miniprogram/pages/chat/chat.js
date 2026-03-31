@@ -30,7 +30,7 @@ Page({
 
     const chat = chatStore.getChat(chatId)
     if (chat) {
-      wx.setNavigationBarTitle({ title: chat.title })
+      wx.setNavigationBarTitle({ title: chat.title || '政务 AI 智能助手' })
       this.setData({ messages: chat.messages })
       this.scrollToBottom()
     }
@@ -52,6 +52,12 @@ Page({
     if (!text || this.data.isThinking) return
     this.setData({ inputText: '' })
     this.sendMessage(text)
+  },
+
+  onSuggestionTap(e) {
+    const q = e.currentTarget.dataset.q
+    if (!q || this.data.isThinking) return
+    this.sendMessage(q)
   },
 
   async onMicTap() {
@@ -115,7 +121,6 @@ Page({
     const index = e.currentTarget.dataset.index
     const text = e.currentTarget.dataset.text
 
-    // 如果正在播放同一条，停止
     if (this.data.playingIndex === index) {
       if (this._audioContext) {
         this._audioContext.stop()

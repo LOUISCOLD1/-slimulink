@@ -1,93 +1,67 @@
-.container { padding: 0 0 32rpx; }
+/* 便民电话 — 红金政务主题 */
+.container { padding: 0 0 32rpx; background: var(--surface); }
 .page-header { padding: 28rpx 28rpx 20rpx; }
-.page-title { font-size: 40rpx; font-weight: 700; color: #022c22; }
-.page-subtitle { font-size: 24rpx; color: #6b7280; margin-top: 4rpx; }
+.page-title { font-size: 40rpx; font-weight: 700; color: #1a1c1c; }
+.page-subtitle { font-size: 24rpx; color: #5e3f3a; margin-top: 4rpx; }
 
 .group-title {
-  font-size: 26rpx; font-weight: 600; color: #064e3b;
-  margin: 20rpx 28rpx 10rpx; padding-bottom: 8rpx;
-  border-bottom: 2rpx solid #d1fae5;
+  font-size: 26rpx; font-weight: 600; color: #1a1c1c;
+  margin: 24rpx 28rpx 10rpx; padding-bottom: 10rpx;
   display: flex;
   align-items: center;
   gap: 8rpx;
 }
-/* 分组标题前的金色小圆点 */
+/* 组标题前的红色圆点 */
 .group-title::before {
   content: '';
-  display: inline-block;
-  width: 10rpx;
-  height: 10rpx;
+  width: 10rpx; height: 10rpx;
   border-radius: 50%;
-  background: #fbbf24;
-  box-shadow: 0 0 6rpx rgba(251, 191, 36, 0.4);
+  background: var(--primary);
   flex-shrink: 0;
 }
 
 .contact-card {
   display: flex; align-items: center; justify-content: space-between;
-  background: #fff; margin: 0 24rpx 10rpx; border-radius: 16rpx;
-  padding: 24rpx;
-  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.04), 0 6rpx 16rpx rgba(0, 0, 0, 0.03);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #fff; margin: 0 24rpx 10rpx; border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 4rpx 24rpx rgba(26,28,28,0.04);
+  transition: all 0.2s;
 }
-/* 交替微妙背景色，产生视觉节奏感 */
-.contact-card:nth-child(even) {
-  background: #fefffe;
-}
-.contact-card:nth-child(odd) {
-  background: #fff;
-}
-.contact-card:active {
-  transform: scale(0.985);
-}
-.contact-name { font-size: 30rpx; font-weight: 600; color: #1f2937; }
-.contact-phone { font-size: 26rpx; color: #059669; margin-top: 4rpx; }
+.contact-card:active { background: #f3f3f3; transform: scale(0.99); }
+.contact-card:nth-child(even) { background: #fafafa; }
 
-.contact-actions { display: flex; gap: 16rpx; align-items: center; }
+.contact-info { flex: 1; overflow: hidden; }
+.contact-name { font-size: 30rpx; font-weight: 600; color: #1a1c1c; }
+.contact-phone { font-size: 26rpx; color: var(--primary); margin-top: 4rpx; }
+
+.contact-actions { display: flex; gap: 16rpx; align-items: center; flex-shrink: 0; }
 .fav-btn {
-  font-size: 36rpx; width: 60rpx; height: 60rpx;
+  font-size: 36rpx; width: 64rpx; height: 64rpx;
   display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; background: #f3f4f6;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%; background: #f3f3f3;
+  transition: all 0.2s;
 }
-.fav-active {
-  background: #fef3c7;
-  /* 收藏星星激活时的暖色光晕 */
-  box-shadow: 0 0 12rpx rgba(251, 191, 36, 0.35), 0 0 24rpx rgba(251, 191, 36, 0.15);
-}
+.fav-active { background: #fef3c7; box-shadow: 0 0 12rpx rgba(252,212,0,0.2); }
 .call-btn {
-  font-size: 32rpx; width: 80rpx; height: 60rpx;
+  font-size: 32rpx; width: 88rpx; height: 64rpx;
   display: flex; align-items: center; justify-content: center;
-  border-radius: 12rpx;
-  /* 渐变 + 立体阴影的拨号按钮 */
-  background: linear-gradient(135deg, #059669, #047857);
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #a00000, #ce0000);
   color: #fff;
-  box-shadow: 0 3rpx 0 #065f46, 0 4rpx 12rpx rgba(5, 150, 105, 0.3);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4rpx 16rpx rgba(160,0,0,0.2);
+  transition: all 0.15s;
 }
-.call-btn:active {
-  opacity: 0.9;
-  transform: translateY(2rpx);
-  box-shadow: 0 1rpx 0 #065f46, 0 2rpx 6rpx rgba(5, 150, 105, 0.2);
-}
+.call-btn:active { transform: scale(0.95); box-shadow: 0 2rpx 8rpx rgba(160,0,0,0.15); }
 
 .empty-state { text-align: center; padding: 80rpx; color: #9ca3af; font-size: 28rpx; }
 
-.loading-state {
-  text-align: center;
-  padding: 80rpx;
-  color: #6b7280;
-  font-size: 28rpx;
-}
+.loading-state { text-align: center; padding: 80rpx; color: #5e3f3a; }
 .loading-spinner {
-  width: 40rpx;
-  height: 40rpx;
-  border: 4rpx solid #e5e7eb;
-  border-top: 4rpx solid #059669;
+  width: 40rpx; height: 40rpx;
+  border: 4rpx solid #e2e2e2;
+  border-top: 4rpx solid var(--primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 16rpx;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
