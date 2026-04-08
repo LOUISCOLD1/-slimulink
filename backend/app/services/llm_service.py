@@ -10,17 +10,25 @@ logger = logging.getLogger(__name__)
 _session_contexts: dict[str, list[dict]] = {}
 
 
+def _is_real_key(key: str) -> bool:
+    """Check if an API key looks real (not a placeholder)."""
+    if not key:
+        return False
+    placeholders = {"your_deepseek_api_key_here", "your_zhipuai_api_key_here", ""}
+    return key.strip() not in placeholders and not key.startswith("your_")
+
+
 def _get_clients() -> list[tuple[str, AsyncOpenAI, str]]:
     """Return list of (name, client, model) tuples in priority order."""
     settings = get_settings()
     clients = []
-    if settings.deepseek_api_key:
+    if _is_real_key(settings.deepseek_api_key):
         clients.append((
             "DeepSeek",
             AsyncOpenAI(api_key=settings.deepseek_api_key, base_url=settings.deepseek_base_url),
             settings.deepseek_model,
         ))
-    if settings.zhipuai_api_key:
+    if _is_real_key(settings.zhipuai_api_key):
         clients.append((
             "ZhipuAI",
             AsyncOpenAI(api_key=settings.zhipuai_api_key, base_url=settings.zhipuai_base_url),
