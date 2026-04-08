@@ -1,19 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslationStore } from '../stores/translationStore';
+import { fetchSettings, updateSettings, type UserSettingsData } from '../services/api';
 
 export function SettingsPage() {
-  const { sourceLanguage, targetLanguage, setSourceLanguage, setTargetLanguage } =
+  const { sourceLanguage, targetLanguage, setSourceLanguage, setTargetLanguage, user, logout } =
     useTranslationStore();
-  const [apiBase, setApiBase] = useState(
-    () => localStorage.getItem('api_base') || ''
-  );
+  const [autoPlayTts, setAutoPlayTts] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
-  const handleSaveApiBase = () => {
-    if (apiBase) {
-      localStorage.setItem('api_base', apiBase);
-    } else {
-      localStorage.removeItem('api_base');
-    }
+  // Load settings from server
+  useEffect(() => {
+    fetchSettings()
+      .then((data) => {
+        setSourceLanguage(data.source_lang);
+        setTargetLanguage(data.target_lang);
+        setAutoPlayTts(data.auto_play_tts);
+      })
+      .catch(() => { /* use local defaults */ });
+  }, []);// eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaved(false);
+    try {
+      const data: UserSettingsData = {
+        source_lang: sourceLanguage,
+        target_lang: targetLanguage,
+        tts_voice_source: null,
+        tts_voice_target: null,
+        auto_play_tts: autoPlayTts,
+      };
+      await updateSettings(data);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch { /* ignore */ }
+    finally { setSaving(false); }
   };
 
   return (
@@ -23,6 +45,27 @@ export function SettingsPage() {
       </div>
 
       <div className="flex-1 space-y-6 overflow-y-auto p-4">
+        {/* User Info */}
+        <section>
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+            Account
+          </h3>
+          <div className="rounded-2xl bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-gray-800">{user?.display_name || user?.username}</p>
+                <p className="text-xs text-gray-400">@{user?.username}</p>
+              </div>
+              <button
+                onClick={logout}
+                className="rounded-xl bg-red-50 px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-100"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </section>
+
         {/* Language Settings */}
         <section>
           <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
@@ -63,35 +106,28 @@ export function SettingsPage() {
                 <option value="ru">Русский</option>
               </select>
             </div>
+            <div className="flex items-center justify-between">
+              <label className="text-sm text-gray-600">Auto-play TTS</label>
+              <button
+                onClick={() => setAutoPlayTts(!autoPlayTts)}
+                className={`relative h-6 w-11 rounded-full transition-colors ${autoPlayTts ? 'bg-indigo-500' : 'bg-gray-300'}`}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${autoPlayTts ? 'left-5.5 translate-x-0' : 'left-0.5'}`} />
+              </button>
+            </div>
           </div>
         </section>
 
-        {/* API Settings */}
-        <section>
-          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
-            API Configuration
-          </h3>
-          <div className="space-y-3 rounded-2xl bg-white p-4 shadow-sm">
-            <div>
-              <label className="mb-1 block text-sm text-gray-600">
-                Backend API URL (optional)
-              </label>
-              <input
-                type="text"
-                value={apiBase}
-                onChange={(e) => setApiBase(e.target.value)}
-                placeholder="http://localhost:8000"
-                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
-              />
-            </div>
-            <button
-              onClick={handleSaveApiBase}
-              className="w-full rounded-xl bg-indigo-500 py-2 text-sm font-medium text-white hover:bg-indigo-600"
-            >
-              Save
-            </button>
-          </div>
-        </section>
+        {/* Save Button */}
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className={`w-full rounded-xl py-2.5 text-sm font-medium text-white transition-colors ${
+            saved ? 'bg-emerald-500' : 'bg-indigo-500 hover:bg-indigo-600'
+          } disabled:opacity-50`}
+        >
+          {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Settings'}
+        </button>
 
         {/* About */}
         <section>

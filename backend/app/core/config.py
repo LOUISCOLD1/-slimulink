@@ -13,6 +13,13 @@ class Settings(BaseSettings):
     zhipuai_base_url: str = "https://open.bigmodel.cn/api/paas/v4"
     zhipuai_model: str = "glm-4-flash"
 
+    # Database
+    database_url: str = "sqlite+aiosqlite:///./data/app.db"
+
+    # JWT
+    jwt_secret: str = "change-me-in-production-use-a-random-string"
+    jwt_expire_minutes: int = 60 * 24 * 7  # 7 days
+
     # App settings
     default_target_language: str = "English"
     max_context_messages: int = 10
